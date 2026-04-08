@@ -1,0 +1,229 @@
+/* ============================================================
+   theme.css — Berean Design System
+   All CSS custom properties (colour tokens, spacing, typography)
+   Tailwind v4 @theme block maps tokens to utility classes
+   ============================================================ */
+
+/* NOTE: @import "tailwindcss" removed — Stage 1 uses zero Tailwind utility classes.
+   All component CSS is injected via injectComponentCSS() in main.js.
+   The @tailwindcss/vite plugin was triggering an infinite HMR reload loop because
+   it was scanning public/db/bible_base.sqlite3 (56MB binary) as a content file.
+   Tailwind will be re-enabled in Stage 5 when utility classes are needed. */
+
+/* ── Tailwind v4 Theme Tokens (kept for future use) ────────── */
+@theme {
+  /* Surface colours */
+  --color-surface-base:     #121212;
+  --color-surface-elevated: #1E1E1E;
+  --color-surface-raised:   #2D2D2D;
+  --color-surface-modal:    #363636;
+
+  /* Text colours */
+  --color-ink-primary:   #E8E6E1;
+  --color-ink-secondary: #A39E93;
+  --color-ink-muted:     #6B675F;
+  --color-ink-scripture: #F4F1EA;
+
+  /* Accent colours */
+  --color-accent-gold:     #D4AF37;
+  --color-accent-sage:     #768A78;
+  --color-accent-burgundy: #8C1127;
+
+  /* Original language tints */
+  --color-greek-tint:  #E2EBFA;
+  --color-hebrew-tint: #F3EBE1;
+
+  /* Borders */
+  --color-border-subtle: #3E3E3E;
+
+  /* Font families */
+  --font-scripture: "EB Garamond", "Georgia", serif;
+  --font-greek:     "SBL Greek", "Times New Roman", serif;
+  --font-hebrew:    "Ezra SIL", "Times New Roman", serif;
+  --font-ui:        "Inter", system-ui, sans-serif;
+  --font-mono:      "Fira Code", "Consolas", monospace;
+
+  /* Border radius */
+  --radius-ui:    0.375rem;
+  --radius-panel: 0.5rem;
+
+  /* Spacing */
+  --space-panel:     1rem;
+  --space-verse-gap: 0.75rem;
+  --space-word-gap:  0.375rem;
+
+  /* Animation */
+  --ease-berean: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── CSS Custom Properties (component-level access) ─────── */
+:root {
+  /* Surfaces */
+  --color-surface-base:     #121212;
+  --color-surface-elevated: #1E1E1E;
+  --color-surface-raised:   #2D2D2D;
+  --color-surface-modal:    #363636;
+
+  /* Text */
+  --color-ink-primary:   #E8E6E1;   /* 13.5:1 contrast on base */
+  --color-ink-secondary: #A39E93;   /* 7.2:1 contrast */
+  --color-ink-muted:     #6B675F;   /* 3.5:1 — disabled/placeholder only */
+  --color-ink-scripture: #F4F1EA;   /* 15.8:1 — Bible text only */
+
+  /* Accents */
+  --color-accent-gold:     #D4AF37; /* Study mode — active nav, verse numbers, CTAs */
+  --color-accent-sage:     #768A78; /* Sermon Builder mode only */
+  --color-accent-burgundy: #8C1127; /* Typology links, critical variants */
+
+  /* Original languages */
+  --color-greek-tint:  #E2EBFA;
+  --color-hebrew-tint: #F3EBE1;
+
+  /* Borders */
+  --color-border-subtle: #3E3E3E;
+
+  /* Typography */
+  --font-scripture:          "EB Garamond", "Georgia", serif;
+  --font-greek:              "SBL Greek", "Times New Roman", serif;
+  --font-hebrew:             "Ezra SIL", "Times New Roman", serif;
+  --font-ui:                 "Inter", system-ui, sans-serif;
+  --font-mono:               "Fira Code", "Consolas", monospace;
+  --font-scripture-size:     1.125rem;
+  --font-scripture-lh:       1.625;
+  --font-interlinear-src:    1.25rem;
+  --font-interlinear-meta:   0.75rem;
+  --font-ui-label:           0.875rem;
+
+  /* Spacing */
+  --space-panel:     1rem;
+  --space-verse-gap: 0.75rem;
+  --space-word-gap:  0.375rem;
+
+  /* Sidebar width */
+  --sidebar-width: 3.5rem;
+
+  /* Panel sizes */
+  --panel-min: 280px;
+  --panel-max: 800px;
+
+  /* Animation */
+  --ease-berean:       cubic-bezier(0.4, 0, 0.2, 1);
+  --duration-fast:     100ms;
+  --duration-standard: 200ms;
+  --duration-slow:     250ms;
+}
+
+/* ── Light Mode Overrides ────────────────────────────────── */
+.light-mode {
+  --color-surface-base:     #FAF9F6;
+  --color-surface-elevated: #F4F2EC;
+  --color-surface-raised:   #EAE7E0;
+  --color-surface-modal:    #E0DDD6;
+  --color-ink-primary:      #1A1A1A;
+  --color-ink-secondary:    #4A4540;
+  --color-ink-muted:        #8A857D;
+  --color-ink-scripture:    #0A0A0A;
+  --color-border-subtle:    #D5D1C8;
+  --color-accent-gold:      #B8960E; /* Slightly darker for light bg contrast */
+}
+
+/* ── Base Styles ─────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: var(--font-ui);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-surface-base);
+  color: var(--color-ink-primary);
+  font-family: var(--font-ui);
+  min-height: 100vh;
+  overflow: hidden; /* Panels manage their own scroll */
+}
+
+/* ── Reduced Motion ──────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0ms !important;
+    animation-duration: 0ms !important;
+  }
+}
+
+/* ── Scrollbars (Chromium) ───────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-surface-base);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-subtle);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-ink-muted);
+}
+
+/* ── Focus Visible ───────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--color-accent-gold);
+  outline-offset: 2px;
+  border-radius: var(--radius-ui);
+}
+
+/* ── Loading Screen ──────────────────────────────────────── */
+#loading-screen {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  background: var(--color-surface-base);
+  z-index: 9999;
+  transition: opacity var(--duration-standard) var(--ease-berean);
+}
+
+#loading-screen.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.loading-logo {
+  animation: pulse-gold 1.5s ease-in-out infinite;
+}
+
+.loading-text {
+  font-family: var(--font-ui);
+  font-size: var(--font-ui-label);
+  color: var(--color-ink-muted);
+  margin: 0;
+  letter-spacing: 0.05em;
+}
+
+@keyframes pulse-gold {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* ── App Shell ───────────────────────────────────────────── */
+#app {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}

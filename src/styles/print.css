@@ -1,0 +1,234 @@
+/* ============================================================
+   print.css — Print styles for study sheets and sermon notes
+   Uses CSS custom properties + light-dark() — NO filter:invert()
+   ============================================================ */
+
+@media print {
+  /* ── Force light mode for printing ────────────────────── */
+  :root {
+    --color-surface-base:     #FFFFFF;
+    --color-surface-elevated: #F8F8F6;
+    --color-surface-raised:   #F0EDE8;
+    --color-surface-modal:    #EBEBEB;
+    --color-ink-primary:      #0A0A0A;
+    --color-ink-secondary:    #3A3530;
+    --color-ink-muted:        #6B675F;
+    --color-ink-scripture:    #000000;
+    --color-border-subtle:    #CCCCCC;
+    --color-accent-gold:      #8B6914; /* Darker gold for print legibility */
+    --color-accent-burgundy:  #6A0C1E;
+    --color-accent-sage:      #4A5E4C;
+  }
+
+  /* ── Reset layout for print ────────────────────────────── */
+  body {
+    overflow: visible;
+    background: white;
+    color: black;
+    font-size: 11pt;
+    line-height: 1.5;
+  }
+
+  /* Hide interactive UI chrome */
+  #loading-screen,
+  .sidebar,
+  .panel-resize-handle,
+  .command-palette,
+  .toast-container,
+  .tippy-box,
+  [data-print="hide"],
+  button:not([data-print="show"]),
+  .byok-modal,
+  .settings-panel,
+  .se-header,
+  .se-toolbar {
+    display: none !important;
+  }
+
+  /* ── Page setup ────────────────────────────────────────── */
+  @page {
+    size: A4;
+    margin: 20mm 18mm 20mm 18mm;
+  }
+
+  @page :first {
+    margin-top: 25mm;
+  }
+
+  /* ── Bible text ────────────────────────────────────────── */
+  .verse-container {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    margin-bottom: 0.5em;
+  }
+
+  .verse-text {
+    font-family: "EB Garamond", "Georgia", serif;
+    font-size: 12pt;
+    line-height: 1.7;
+    color: var(--color-ink-scripture);
+  }
+
+  .verse-number {
+    font-family: "Fira Code", monospace;
+    font-size: 8pt;
+    color: var(--color-accent-gold);
+    vertical-align: super;
+    margin-right: 0.25em;
+  }
+
+  /* ── Commentary blocks ──────────────────────────────────── */
+  .commentary-block {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    border-left: 2px solid var(--color-border-subtle);
+    padding-left: 0.75rem;
+    margin: 0.75rem 0;
+    font-size: 10pt;
+  }
+
+  .commentary-source {
+    font-size: 8pt;
+    color: var(--color-ink-muted);
+    font-variant: small-caps;
+    margin-bottom: 0.25rem;
+  }
+
+  /* ── Sermon notes (TipTap editor content) ───────────────── */
+  .tiptap {
+    font-family: "EB Garamond", "Georgia", serif;
+    font-size: 12pt;
+    line-height: 1.7;
+  }
+
+  .tiptap h1 {
+    font-size: 18pt;
+    font-weight: 700;
+    border-bottom: 1pt solid var(--color-border-subtle);
+    padding-bottom: 4pt;
+    margin-bottom: 12pt;
+    break-after: avoid;
+  }
+
+  .tiptap h2 {
+    font-size: 14pt;
+    font-weight: 600;
+    margin-top: 16pt;
+    break-after: avoid;
+  }
+
+  .tiptap h3 {
+    font-size: 12pt;
+    font-weight: 600;
+    break-after: avoid;
+  }
+
+  /* ScriptureBlock */
+  .tiptap blockquote[data-type="scripture-block"] {
+    border-left: 3pt solid var(--color-accent-gold);
+    padding: 6pt 12pt;
+    margin: 12pt 0;
+    background: var(--color-surface-elevated);
+    font-family: "EB Garamond", "Georgia", serif;
+    font-size: 12pt;
+    break-inside: avoid;
+  }
+
+  /* IllustrationBlock */
+  .tiptap aside[data-type="illustration-block"] {
+    border: 1pt solid var(--color-border-subtle);
+    border-radius: 4pt;
+    padding: 8pt 12pt;
+    margin: 12pt 0;
+    background: var(--color-surface-elevated);
+    break-inside: avoid;
+  }
+
+  /* ApplicationBlock */
+  .tiptap [data-type="application-block"] {
+    border-left: 3pt solid var(--color-accent-sage);
+    padding-left: 12pt;
+    margin: 12pt 0;
+    break-inside: avoid;
+  }
+
+  /* ── Cross-reference list ───────────────────────────────── */
+  .crossref-list {
+    break-inside: avoid;
+    font-size: 9pt;
+    columns: 2;
+    column-gap: 1rem;
+  }
+
+  .crossref-item {
+    break-inside: avoid;
+    padding: 1pt 0;
+  }
+
+  /* ── Interlinear ────────────────────────────────────────── */
+  .interlinear-row {
+    break-inside: avoid;
+  }
+
+  .word-stack {
+    padding: 2pt 4pt;
+  }
+
+  .source-text {
+    font-size: 14pt;
+  }
+
+  .transliteration,
+  .english-gloss,
+  .morph-tag {
+    font-size: 8pt;
+  }
+
+  /* ── Study sheet header ─────────────────────────────────── */
+  .print-header {
+    display: block;
+    text-align: center;
+    margin-bottom: 24pt;
+    border-bottom: 2pt solid var(--color-border-subtle);
+    padding-bottom: 12pt;
+  }
+
+  .print-header__title {
+    font-family: "EB Garamond", "Georgia", serif;
+    font-size: 20pt;
+    font-weight: 700;
+    margin: 0 0 4pt;
+  }
+
+  .print-header__passage {
+    font-size: 13pt;
+    color: var(--color-ink-secondary);
+    margin: 0 0 2pt;
+  }
+
+  .print-header__date {
+    font-size: 10pt;
+    color: var(--color-ink-muted);
+    margin: 0;
+  }
+
+  /* ── Footer ─────────────────────────────────────────────── */
+  .print-footer {
+    display: block;
+    position: fixed;
+    bottom: 10mm;
+    left: 18mm;
+    right: 18mm;
+    font-size: 7pt;
+    color: var(--color-ink-muted);
+    border-top: 0.5pt solid var(--color-border-subtle);
+    padding-top: 3pt;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* ── Links ──────────────────────────────────────────────── */
+  a[href]::after {
+    content: none; /* Don't show URLs — passages are self-referencing */
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "enableAllProjectMcpServers": true,
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/usr/bin/python3 /Users/peder/Documents/Claude/Code/Berean/.claude/hooks/js-syntax-check.py"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/usr/bin/osascript -e 'display notification \"Claude has finished. Check the result.\" with title \"Berean \u00b7 Claude Code\" sound name \"Glass\"'"
+          }
+        ]
+      }
+    ]
+  },
+  "permissions": {
+    "allow": [
+      "Bash(/usr/bin/python3 /Users/peder/Documents/Claude/Code/Berean/.claude/hooks/*)",
+      "Bash(/usr/local/bin/node --check *)",
+      "Bash(/usr/bin/osascript *)"
+    ]
+  }
+}

@@ -1,0 +1,116 @@
+/* ============================================================
+   fonts.css — Self-hosted font declarations
+   Download fonts and place in /public/fonts/ before using.
+
+   DOWNLOAD INSTRUCTIONS:
+   ─────────────────────
+   EB Garamond:  https://fonts.google.com/specimen/EB+Garamond
+                 Download "Variable" — get EBGaramond-VariableFont_wght.ttf
+                 and EBGaramond-Italic-VariableFont_wght.ttf
+
+   Inter:        https://fonts.google.com/specimen/Inter
+                 Download "Variable" — get Inter-VariableFont_opsz,wght.ttf
+
+   Fira Code:    https://fonts.google.com/specimen/Fira+Code
+                 Download "Variable" — get FiraCode-VariableFont_wght.ttf
+
+   SBL Greek:    https://www.sbl-site.org/educational/BiblicalFonts_SBLGreek.aspx
+                 Free download — get SBLGreek.ttf
+
+   Ezra SIL:     https://software.sil.org/ezra/
+                 Free download — get EzraSIL-R.ttf and EzraSIL-B.ttf
+
+   Place ALL downloaded .ttf files in: /public/fonts/
+   ============================================================ */
+
+/* ── EB Garamond — Scripture text ───────────────────────── */
+@font-face {
+  font-family: "EB Garamond";
+  src: url("/fonts/EBGaramond-VariableFont_wght.ttf") format("truetype");
+  font-weight: 400 800;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "EB Garamond";
+  src: url("/fonts/EBGaramond-Italic-VariableFont_wght.ttf") format("truetype");
+  font-weight: 400 800;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* ── Inter — UI chrome ───────────────────────────────────── */
+@font-face {
+  font-family: "Inter";
+  src: url("/fonts/Inter-VariableFont_opsz,wght.ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ── Fira Code — Strong's numbers, morphology tags ──────── */
+@font-face {
+  font-family: "Fira Code";
+  src: url("/fonts/FiraCode-VariableFont_wght.ttf") format("truetype");
+  font-weight: 300 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ── Gentium Plus — Greek NT interlinear ─────────────────── */
+/* CRITICAL: Must load before any Greek interlinear renders   */
+/* Gentium Plus supports full polytonic Greek (Unicode 1F00–1FFF) */
+@font-face {
+  font-family: "Gentium Plus";
+  src: url("/fonts/Gentium-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: block; /* block, not swap — Greek must not flash Latin */
+}
+@font-face {
+  font-family: "Gentium Plus";
+  src: url("/fonts/Gentium-Italic.ttf") format("truetype");
+  font-weight: 400;
+  font-style: italic;
+  font-display: block;
+}
+@font-face {
+  font-family: "Gentium Plus";
+  src: url("/fonts/Gentium-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: block;
+}
+
+/* ── Ezra SIL OT — Hebrew OT interlinear ────────────────── */
+/* CRITICAL: Must load before any Hebrew interlinear renders  */
+/* SILEOT = SIL Ezra OT; SILEOTSR = SIL Ezra OT SemiRegular  */
+@font-face {
+  font-family: "Ezra SIL OT";
+  src: url("/fonts/SILEOT.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: block; /* block, not swap — Hebrew must not flash Latin */
+}
+@font-face {
+  font-family: "Ezra SIL OT";
+  src: url("/fonts/SILEOTSR.ttf") format("truetype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: block;
+}
+
+/* ── Font-loading status indicators ─────────────────────── */
+/* Used by interlinear.js to check if critical fonts loaded  */
+.font-check-greek {
+  font-family: "Gentium Plus", monospace;
+  position: absolute;
+  visibility: hidden;
+  pointer-events: none;
+}
+.font-check-hebrew {
+  font-family: "Ezra SIL OT", monospace;
+  position: absolute;
+  visibility: hidden;
+  pointer-events: none;
+}

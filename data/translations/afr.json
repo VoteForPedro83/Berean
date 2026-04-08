@@ -1,0 +1,178 @@
+{
+  "app": {
+    "name": "Berean",
+    "tagline": "Ernstige Bybelstudies vir Predikante"
+  },
+  "nav": {
+    "study": "Studiemodus",
+    "sermon": "Preekbouer",
+    "search": "Soek",
+    "maps": "Kaarte en Tydlyn",
+    "settings": "Instellings"
+  },
+  "bible": {
+    "chapterOf": "Hoofstuk {{chapter}} van {{book}}",
+    "goToVerse": "Gaan na vers",
+    "previousChapter": "Vorige hoofstuk",
+    "nextChapter": "Volgende hoofstuk",
+    "bookmarkVerse": "Boekmerk hierdie vers",
+    "copyVerse": "Kopieer vers",
+    "sendToClippings": "Stuur na knipsels",
+    "interlinear": "Skakel interlineêr",
+    "translations": "Vertalings",
+    "loadingVerses": "Laai verse…",
+    "errorLoading": "Kon nie hierdie gedeelte laai nie. Kyk asseblief jou verbinding na."
+  },
+  "search": {
+    "placeholder": "Soek die Bybel, onderwerpe, mense, plekke…",
+    "noResults": "Geen resultate gevind vir "{{query}}"",
+    "resultsCount": "{{count}} resultate",
+    "inBook": "in {{book}}",
+    "allBooks": "Alle boeke",
+    "ot": "Ou Testament",
+    "nt": "Nuwe Testament",
+    "searchByStrongs": "Soek op Strong's nommer (bv. G25)"
+  },
+  "commentary": {
+    "title": "Kommentare",
+    "sources": {
+      "MHC": "Matthew Henry",
+      "JFB": "Jamieson, Fausset & Brown",
+      "BARNES": "Albert Barnes",
+      "IDS": "In die Skriflig",
+      "HTS": "HTS Teologiese Studies"
+    },
+    "summarise": "Vat saam met KI",
+    "loading": "Laai kommentaar…",
+    "noContent": "Geen kommentaar beskikbaar vir hierdie gedeelte nie."
+  },
+  "crossrefs": {
+    "title": "Kruisverwysings",
+    "sources": {
+      "openbible": "OpenBible",
+      "tsk": "Skatkis van die Skrif",
+      "ubs": "Bybelgenootskap"
+    },
+    "noRefs": "Geen kruisverwysings vir hierdie vers nie."
+  },
+  "wordStudy": {
+    "title": "Woordstudie",
+    "strongsId": "Strong's {{id}}",
+    "definition": "Definisie",
+    "grammar": "Grammatika",
+    "concordance": "Konkordansie",
+    "domains": "Semantiese Domeine",
+    "occurrences": "{{count}} voorkoms(te) in die Bybel",
+    "hapax": "Hapax legomenon — verskyn net een keer in die Bybel",
+    "aiExplain": "Vra KI om hierdie grammatika te verduidelik"
+  },
+  "sermon": {
+    "newSermon": "Nuwe Preek",
+    "untitledSermon": "Naamlose Preek",
+    "saveStatus": {
+      "saving": "Stoor…",
+      "saved": "Gestoor",
+      "error": "Stoor het misluk"
+    },
+    "export": "Voer Preek Uit",
+    "exportFormats": {
+      "docx": "Word-dokument (.docx)",
+      "pdf": "PDF",
+      "txt": "Gewone Teks",
+      "html": "Webblad"
+    },
+    "presentation": "Lanseer Aanbieding",
+    "passageGuide": "Genereer Gedeeltegids",
+    "checklist": "Eksegetiese Kontrolelys"
+  },
+  "ai": {
+    "disclaimer": "KI-gegenereerde navorsingsbystand — verifieer alle bewerings teen die Skrif.",
+    "thinking": "Dink na…",
+    "streaming": "Genereer…",
+    "error": "KI-versoek het misluk. Kyk jou API-sleutel in Instellings na.",
+    "fallback": "Omgeskakel na gratis Gemini — {{originalProvider}}-limiet bereik.",
+    "noKey": "Geen API-sleutel opgestel nie. Voeg een by in Instellings → KI-sleutels.",
+    "abort": "Stop genereer"
+  },
+  "settings": {
+    "title": "Instellings",
+    "theme": "Voorkoms",
+    "themeDark": "Donker (Geleerde)",
+    "themeLight": "Lig (Druk)",
+    "language": "Taal",
+    "fontSize": "Skrif Lettertipe-grootte",
+    "fontSizeSmall": "Klein",
+    "fontSizeDefault": "Verstek",
+    "fontSizeLarge": "Groot",
+    "fontSizeXL": "Ekstra Groot",
+    "aiKeys": "KI API-sleutels",
+    "aiProvider": "Verskaffer",
+    "aiKeyLabel": "API-sleutel",
+    "aiKeySave": "Stoor sleutel",
+    "aiKeyDelete": "Verwyder sleutel",
+    "aiKeyPin": "4-syfer PIN om jou sleutel te beskerm",
+    "about": "Aangaande Berean",
+    "version": "Weergawe {{version}}",
+    "openSource": "Oopbron, vry vir altyd",
+    "licence": "Nie-kommersieel — vir die Liggaam van Christus"
+  },
+  "onboarding": {
+    "step1": {
+      "title": "Welkom by Berean",
+      "body": "'n Gratis, geleerde-graad Bybelstudieplatform vir predikante. Laat ons jou rondlei."
+    },
+    "step2": {
+      "title": "Die Sybalkie",
+      "body": "Vyf bestemmings: Studiemodus, Preekbouer, Soek, Kaarte, en Instellings."
+    },
+    "step3": {
+      "title": "Die Bybelvenster",
+      "body": "Navigeer hoofstukke met Alt+← en Alt+→, of klik die boeknaam om enige plek heen te spring."
+    },
+    "step4": {
+      "title": "Versaksies",
+      "body": "Beweeg oor enige versnommer om dit te boekmerk, kopieer, of na jou preekknipsels te stuur."
+    },
+    "step5": {
+      "title": "Interlineêr",
+      "body": "Druk Ctrl+I om die oorspronklike Grieks of Hebreeus onder elke woord te wys, met morfologie-merkers."
+    },
+    "step6": {
+      "title": "Strong's Soek",
+      "body": "Klik enige oorspronklike-taal woord om sy Strong's definisie, semantiese domein, en alle voorkomste te sien."
+    },
+    "step7": {
+      "title": "Opdragpalet",
+      "body": "Druk Ctrl+K om gedeeltes, onderwerpe, mense, plekke, en opdragte van oral te soek."
+    },
+    "step8": {
+      "title": "KI-Assistent",
+      "body": "Druk Ctrl+/ om die KI te vra om enige gedeelte te verduidelik, saam te vat, of te vertaal."
+    },
+    "step9": {
+      "title": "Preekbouer",
+      "body": "Bou preke met TipTap se ryke redigeerder. Sleep Skrif, illustrasies, en knipsels uit jou navorsing in."
+    },
+    "step10": {
+      "title": "Jy Is Gereed",
+      "body": "Alles loop in jou blaaier — geen rekening, geen bediener, geen advertensies nie. Gaan bestudeer die Woord."
+    },
+    "next": "Volgende",
+    "previous": "Vorige",
+    "finish": "Kom Ons Begin",
+    "skip": "Sla toer oor"
+  },
+  "toast": {
+    "bookmarkAdded": "Vers geboekmerk",
+    "bookmarkRemoved": "Boekmerk verwyder",
+    "copiedToClipboard": "Na knipbord gekopieer",
+    "sentToClippings": "Gestuur na knipsels",
+    "keyboardShortcut": "Sleutelbordkortpad: {{shortcut}}"
+  },
+  "errors": {
+    "dbNotLoaded": "Databasis nog nie gelaai nie. Wag asseblief 'n oomblik.",
+    "verseNotFound": "Vers nie gevind nie: {{osisId}}",
+    "networkError": "Netwerkfout — werk in lynlose modus.",
+    "idbError": "Kon nie data plaaslik stoor nie. Stoor mag vol wees."
+  }
+}

@@ -1,0 +1,268 @@
+{
+  "pairs": [
+    {
+      "id": "adam-christ",
+      "ot_refs": ["GEN.2.7", "GEN.3.6"],
+      "ot_label": "Adam — The First Man",
+      "ot_desc": "Federal head of humanity; brought condemnation through one act of disobedience (Gen 3:6).",
+      "nt_refs": ["ROM.5.14", "1CO.15.45"],
+      "nt_label": "Christ — The Last Adam",
+      "nt_desc": "Federal head of the new humanity; brings justification through one act of obedience (Rom 5:19).",
+      "category": "person",
+      "note": "Paul explicitly calls Adam a 'type of the one who was to come' (Rom 5:14). Both are representative heads whose single decisive act determined the standing of all who are in them."
+    },
+    {
+      "id": "noahs-ark-salvation",
+      "ot_refs": ["GEN.6.14", "GEN.7.1"],
+      "ot_label": "Noah's Ark",
+      "ot_desc": "God provided one way of escape from judgment — the ark. Only those inside were saved from the flood.",
+      "nt_refs": ["1PE.3.20", "HEB.11.7"],
+      "nt_label": "Salvation in Christ",
+      "nt_desc": "Peter draws the parallel directly: as eight souls were saved through water, baptism now saves through Christ's resurrection (1 Pet 3:20–21).",
+      "category": "event",
+      "note": "The ark prefigures Christ as the sole refuge from divine judgment. Entry into the ark = union with Christ by faith."
+    },
+    {
+      "id": "melchizedek-christ",
+      "ot_refs": ["GEN.14.18", "PSA.110.4"],
+      "ot_label": "Melchizedek — Priest-King of Salem",
+      "ot_desc": "King of Salem and priest of God Most High; without recorded genealogy, beginning, or end (Heb 7:3).",
+      "nt_refs": ["HEB.7.1", "HEB.5.6"],
+      "nt_label": "Christ — Eternal High Priest",
+      "nt_desc": "Jesus is declared priest 'after the order of Melchizedek' (Ps 110:4; Heb 5:6) — a priesthood superior to the Levitical order.",
+      "category": "person",
+      "note": "Hebrews 7 develops this type at length: Melchizedek's priesthood is superior to Aaron's because Abraham (and by extension Levi) paid tithes to him. Christ's priestly order is eternal and not based on physical descent."
+    },
+    {
+      "id": "isaac-christ",
+      "ot_refs": ["GEN.22.1", "GEN.22.8"],
+      "ot_label": "Isaac — Offered on Moriah",
+      "ot_desc": "Abraham's beloved son, willingly offered on the altar. God provided a substitute at the last moment.",
+      "nt_refs": ["HEB.11.17", "JHN.3.16"],
+      "nt_label": "Christ — The Beloved Son Sacrificed",
+      "nt_desc": "God did not spare his own Son (Rom 8:32). Unlike with Isaac, no substitute was provided — Christ himself was the sacrifice.",
+      "category": "person",
+      "note": "The Moriah narrative uses the same language as John 3:16 ('beloved/only son', 'offered up'). The ram caught in the thicket is itself a type of substitutionary atonement."
+    },
+    {
+      "id": "joseph-christ",
+      "ot_refs": ["GEN.37.28", "GEN.45.4"],
+      "ot_label": "Joseph — Rejected, Then Exalted",
+      "ot_desc": "Joseph was rejected by his brothers, sold, suffered unjustly, but was exalted to rule and save many alive.",
+      "nt_refs": ["ACT.7.9", "PHP.2.9"],
+      "nt_label": "Christ — Rejected, Then Exalted",
+      "nt_desc": "Stephen's sermon in Acts 7 presents Joseph as a type of Christ: rejected by his own, but raised to a position from which he saves both Jew and Gentile.",
+      "category": "person",
+      "note": "Joseph's pattern — humiliation followed by exaltation — mirrors the kenosis-then-exaltation pattern of Christ (Phil 2:5–11). Joseph's forgiveness of his brothers parallels Christ's intercession from the cross."
+    },
+    {
+      "id": "passover-lamb",
+      "ot_refs": ["EXO.12.3", "EXO.12.13"],
+      "ot_label": "The Passover Lamb",
+      "ot_desc": "An unblemished lamb slaughtered; its blood applied to the doorposts so the destroyer passed over the household.",
+      "nt_refs": ["1CO.5.7", "JHN.1.29"],
+      "nt_label": "Christ — Our Passover Lamb",
+      "nt_desc": "'Christ our Passover has been sacrificed' (1 Cor 5:7). John the Baptist calls Jesus 'the Lamb of God who takes away the sin of the world' (John 1:29).",
+      "category": "institution",
+      "note": "The timing, the blood applied by faith, the requirement of a spotless lamb, and deliverance from death all converge on Christ's atoning sacrifice. The Passover meal itself becomes the Lord's Supper."
+    },
+    {
+      "id": "manna-bread-of-life",
+      "ot_refs": ["EXO.16.15", "PSA.78.24"],
+      "ot_label": "Manna — Bread from Heaven",
+      "ot_desc": "God fed Israel in the wilderness with bread from heaven — given daily, sufficient for all, received by faith.",
+      "nt_refs": ["JHN.6.31", "JHN.6.35"],
+      "nt_label": "Christ — The True Bread from Heaven",
+      "nt_desc": "Jesus explicitly interprets the manna: 'I am the bread of life… your fathers ate the manna in the wilderness, and they died. This is the bread that comes down from heaven' (John 6:48–50).",
+      "category": "object",
+      "note": "Jesus does not merely compare himself to manna — he contrasts himself as its greater fulfilment. The manna sustained physical life temporarily; Christ gives eternal life."
+    },
+    {
+      "id": "rock-in-wilderness",
+      "ot_refs": ["EXO.17.6", "NUM.20.11"],
+      "ot_label": "The Rock at Horeb",
+      "ot_desc": "Moses struck the rock and water flowed out to sustain Israel in the desert. The rock followed them.",
+      "nt_refs": ["1CO.10.4"],
+      "nt_label": "Christ — The Spiritual Rock",
+      "nt_desc": "Paul states plainly: 'the Rock was Christ' (1 Cor 10:4). The water of life flows from the crucified Christ (John 7:37–38; John 19:34).",
+      "category": "object",
+      "note": "Numbers 20 records Moses striking the rock twice (disobeying God who said to speak to it). The rock was to be struck once — just as Christ died once for all (Heb 9:28)."
+    },
+    {
+      "id": "bronze-serpent-christ",
+      "ot_refs": ["NUM.21.9"],
+      "ot_label": "The Bronze Serpent on the Pole",
+      "ot_desc": "God told Moses to make a bronze serpent and lift it on a pole. Anyone bitten by serpents who looked at it lived.",
+      "nt_refs": ["JHN.3.14"],
+      "nt_label": "Christ — Lifted Up on the Cross",
+      "nt_desc": "Jesus says explicitly: 'As Moses lifted up the serpent in the wilderness, so must the Son of Man be lifted up, that whoever believes in him may have eternal life' (John 3:14–15).",
+      "category": "event",
+      "note": "The serpent bore the form of judgment (the serpent) while becoming the means of salvation. Christ was 'made sin' (2 Cor 5:21) — bearing the form of sin's curse — and those who look to him are healed."
+    },
+    {
+      "id": "tabernacle-christ",
+      "ot_refs": ["EXO.25.8", "EXO.40.34"],
+      "ot_label": "The Tabernacle",
+      "ot_desc": "God dwelt among his people in the tabernacle. Its design specified exact approach to God through sacrifice and priesthood.",
+      "nt_refs": ["JHN.1.14", "HEB.8.5", "HEB.9.11"],
+      "nt_label": "Christ — The True Tabernacle",
+      "nt_desc": "'The Word became flesh and tabernacled among us' (John 1:14, literal). The earthly tabernacle was a 'copy and shadow of the heavenly things' (Heb 8:5), which Christ fulfils.",
+      "category": "institution",
+      "note": "Every element of the tabernacle — the altar, the laver, the lamp, the showbread, the incense, the veil — points to an aspect of Christ's person and work. Hebrews 9–10 works this out in detail."
+    },
+    {
+      "id": "high-priest-christ",
+      "ot_refs": ["LEV.16.2", "LEV.16.15"],
+      "ot_label": "The High Priest",
+      "ot_desc": "The High Priest alone entered the Most Holy Place on the Day of Atonement, bearing the names of Israel before God.",
+      "nt_refs": ["HEB.4.14", "HEB.9.11"],
+      "nt_label": "Christ — Our Great High Priest",
+      "nt_desc": "'We have a great high priest who has passed through the heavens, Jesus, the Son of God' (Heb 4:14). He entered not with animal blood but with his own blood (Heb 9:12).",
+      "category": "institution",
+      "note": "The Aaronic high priest was a fallible, mortal, sinful man who had to first offer sacrifice for himself. Christ is holy, innocent, unstained, separated from sinners — yet was made like his brothers in every way to serve as a merciful high priest."
+    },
+    {
+      "id": "day-of-atonement-christ",
+      "ot_refs": ["LEV.16.21", "LEV.16.22"],
+      "ot_label": "The Day of Atonement",
+      "ot_desc": "The annual sacrifice for all of Israel's sins. The scapegoat bore Israel's sins into the wilderness; the other goat was slain.",
+      "nt_refs": ["HEB.9.11", "HEB.9.12"],
+      "nt_label": "Christ's Once-for-All Atonement",
+      "nt_desc": "'He entered once for all into the holy places, not by means of the blood of goats and calves but by means of his own blood, thus securing an eternal redemption' (Heb 9:12).",
+      "category": "institution",
+      "note": "The repetition of the Day of Atonement year after year showed it could not finally deal with sin (Heb 10:1–4). Christ's single sacrifice does what all those repeated sacrifices could not."
+    },
+    {
+      "id": "sabbath-rest",
+      "ot_refs": ["GEN.2.2", "EXO.20.8"],
+      "ot_label": "The Sabbath Rest",
+      "ot_desc": "God rested on the seventh day and commanded Israel to rest. The Promised Land was also a rest (Deut 12:9).",
+      "nt_refs": ["HEB.4.9", "MAT.11.28"],
+      "nt_label": "Rest in Christ",
+      "nt_desc": "'There remains a Sabbath rest for the people of God, for whoever has entered God's rest has also rested from his works as God did from his' (Heb 4:9–10). 'Come to me… and I will give you rest' (Matt 11:28).",
+      "category": "institution",
+      "note": "The Sabbath rest pointed forward to a spiritual rest that Joshua's conquest could not fully provide (Heb 4:8). Christ is the true rest from the labour of self-justification."
+    },
+    {
+      "id": "moses-christ",
+      "ot_refs": ["DEU.18.15", "DEU.18.18"],
+      "ot_label": "Moses — The Prophet",
+      "ot_desc": "God promised to raise up a prophet like Moses from among the people. Moses was the mediator of the Old Covenant.",
+      "nt_refs": ["ACT.3.22", "JHN.1.45"],
+      "nt_label": "Christ — The Greater Prophet",
+      "nt_desc": "Peter and Philip identify Jesus as the prophet like Moses (Acts 3:22; John 1:45). But Christ mediates a better covenant (Heb 8:6), built on better promises.",
+      "category": "person",
+      "note": "Moses delivered Israel from Egyptian bondage; Christ delivers his people from bondage to sin. Moses gave the law from Sinai; Christ gives the law from the mount of beatitudes (Matt 5–7). Moses's face shone with reflected glory; Christ is the source of glory."
+    },
+    {
+      "id": "joshua-christ",
+      "ot_refs": ["JOS.1.6", "JOS.11.23"],
+      "ot_label": "Joshua — Leader into the Land",
+      "ot_desc": "Joshua led Israel across the Jordan into the Promised Land and gave them rest by defeating their enemies.",
+      "nt_refs": ["HEB.4.8"],
+      "nt_label": "Christ — Leader into True Rest",
+      "nt_desc": "'For if Joshua had given them rest, God would not have spoken of another day later on' (Heb 4:8). Jesus (Yeshua = Joshua) is the true Joshua who leads his people into eternal rest.",
+      "category": "person",
+      "note": "Jesus bears the same name as Joshua (Iesous/Yehoshua). The Jordan crossing is a type of baptism (1 Cor 10:2). The Canaanite conquest by Joshua points to Christ's conquest of sin and death on behalf of his people."
+    },
+    {
+      "id": "boaz-kinsman-redeemer",
+      "ot_refs": ["RUT.4.1", "RUT.4.10"],
+      "ot_label": "Boaz — The Kinsman Redeemer",
+      "ot_desc": "Boaz, a near kinsman, redeemed Ruth's inheritance and took her as his wife, restoring what was lost.",
+      "nt_refs": ["EPH.1.7", "GAL.3.13"],
+      "nt_label": "Christ — Our Kinsman Redeemer",
+      "nt_desc": "Christ became like us in every way (Heb 2:17) in order to be our near kinsman. He redeemed what we had lost — paying the price (Gal 3:13) to restore us to our inheritance.",
+      "category": "person",
+      "note": "The go'el (kinsman-redeemer) had to be related to the one in need, willing to redeem, and able to pay the price. Christ became our brother (Heb 2:11), was willing (John 10:18), and paid with his own blood."
+    },
+    {
+      "id": "david-christ",
+      "ot_refs": ["2SA.7.12", "2SA.7.16"],
+      "ot_label": "David — The Anointed King",
+      "ot_desc": "God promised David that his throne would be established forever, with a son who would reign eternally.",
+      "nt_refs": ["LUK.1.32", "ACT.2.30"],
+      "nt_label": "Christ — Son of David, Eternal King",
+      "nt_desc": "The angel declares Jesus will be given 'the throne of his father David' (Luke 1:32). Peter preaches that David foresaw the resurrection of Christ (Acts 2:30–31).",
+      "category": "person",
+      "note": "The Davidic covenant (2 Sam 7) is not fully fulfilled in Solomon. Jesus is the ultimate fulfillment: a son of David (Matt 1:1) whose kingdom has no end (Luke 1:33), ruling from God's right hand (Acts 2:34–36)."
+    },
+    {
+      "id": "solomons-temple-church",
+      "ot_refs": ["1KI.8.11", "2CH.7.2"],
+      "ot_label": "Solomon's Temple",
+      "ot_desc": "God's glory filled the Temple as the place of his dwelling among his people and the seat of his worship.",
+      "nt_refs": ["JHN.2.21", "1CO.3.16"],
+      "nt_label": "Christ's Body / The Church",
+      "nt_desc": "Jesus says 'destroy this temple, and in three days I will raise it up' — referring to his body (John 2:21). Paul calls believers 'God's temple in whom the Spirit dwells' (1 Cor 3:16).",
+      "category": "institution",
+      "note": "The temple's destruction and rebuilding points to both Christ's resurrection and the new covenant community. In the new Jerusalem there is no temple, 'for its temple is the Lord God Almighty and the Lamb' (Rev 21:22)."
+    },
+    {
+      "id": "jonah-resurrection",
+      "ot_refs": ["JON.1.17", "JON.2.10"],
+      "ot_label": "Jonah in the Fish — Three Days",
+      "ot_desc": "Jonah was swallowed by a great fish and after three days was vomited onto dry land, then completed his mission.",
+      "nt_refs": ["MAT.12.40"],
+      "nt_label": "Christ's Death and Resurrection",
+      "nt_desc": "Jesus himself identifies this type: 'As Jonah was three days and three nights in the belly of the fish, so will the Son of Man be three days and three nights in the heart of the earth' (Matt 12:40).",
+      "category": "event",
+      "note": "Jonah came out of death to preach repentance to the Gentiles (Nineveh). Christ rose from the dead to bring the gospel to the nations. Jesus says 'something greater than Jonah is here' (Matt 12:41)."
+    },
+    {
+      "id": "suffering-servant-christ",
+      "ot_refs": ["ISA.53.4", "ISA.53.6"],
+      "ot_label": "The Suffering Servant (Isaiah 53)",
+      "ot_desc": "Isaiah describes a servant who is wounded for transgressions, crushed for iniquities; upon him falls the punishment that brings our peace.",
+      "nt_refs": ["MAT.8.17", "1PE.2.24"],
+      "nt_label": "Christ — The Suffering Servant",
+      "nt_desc": "Matthew 8:17 quotes Isaiah 53:4; 1 Peter 2:24 quotes Isaiah 53:5. Philip interprets Isaiah 53 as referring to Jesus (Acts 8:32–35).",
+      "category": "person",
+      "note": "Isaiah 53 is the clearest and most detailed OT prediction of the atonement: penal substitution ('the LORD has laid on him the iniquity of us all'), justification ('by his knowledge shall the righteous one make many to be accounted righteous'), and resurrection ('he shall see his offspring')."
+    },
+    {
+      "id": "new-covenant-christ",
+      "ot_refs": ["JER.31.31", "JER.31.34"],
+      "ot_label": "The New Covenant Promise",
+      "ot_desc": "God promised through Jeremiah a new covenant — not like the one at Sinai — written on hearts, with full forgiveness.",
+      "nt_refs": ["HEB.8.6", "LUK.22.20"],
+      "nt_label": "Christ — Mediator of the New Covenant",
+      "nt_desc": "'This cup is the new covenant in my blood' (Luke 22:20). Hebrews 8:6–13 quotes Jeremiah 31 in full as fulfilled in Christ, making the old covenant 'obsolete.'",
+      "category": "institution",
+      "note": "The Mosaic covenant pointed to its own insufficiency (Heb 10:1). The New Covenant fulfils its promises: the Spirit writes the law on hearts (Ezek 36:26–27), sins are forgiven once for all (Heb 10:12), and all the people of God know him (John 17:3)."
+    },
+    {
+      "id": "red-heifer-purification",
+      "ot_refs": ["NUM.19.2", "NUM.19.17"],
+      "ot_label": "The Red Heifer — Purification from Uncleanness",
+      "ot_desc": "The ashes of an unblemished red heifer mixed with water cleansed Israelites who had been defiled by contact with the dead.",
+      "nt_refs": ["HEB.9.13", "HEB.9.14"],
+      "nt_label": "Christ — Purifier of the Conscience",
+      "nt_desc": "'If the blood of goats and bulls… sanctify for the purification of the flesh, how much more will the blood of Christ, who through the eternal Spirit offered himself without blemish to God, purify our conscience from dead works' (Heb 9:13–14).",
+      "category": "institution",
+      "note": "The red heifer ritual is one of the most mysterious statutes in the Torah. Hebrews uses it precisely because of its strange character — it demonstrates that the entire sacrificial system was pointing beyond itself to Christ's purification of the inner person."
+    },
+    {
+      "id": "city-of-refuge-christ",
+      "ot_refs": ["NUM.35.11", "JOS.20.2"],
+      "ot_label": "The Cities of Refuge",
+      "ot_desc": "God appointed cities of refuge for the inadvertent manslayer; anyone who fled there was safe from the avenger of blood.",
+      "nt_refs": ["HEB.6.18"],
+      "nt_label": "Christ — Our Refuge",
+      "nt_desc": "Hebrews 6:18 alludes to the concept when describing Christians who have fled for refuge to lay hold of the hope set before them. Christ is the believer's city of refuge from the wrath of God.",
+      "category": "institution",
+      "note": "The manslayer had to flee (not walk) to the city — urgency is demanded. The High Priest's death released the manslayer. Christ's death as High Priest releases those who trust in him from the penalty of sin."
+    },
+    {
+      "id": "kingjohn-priestking-melch",
+      "ot_refs": ["PSA.110.1", "PSA.110.4"],
+      "ot_label": "The LORD's Anointed — Psalm 110",
+      "ot_desc": "David's Lord is invited to sit at God's right hand while his enemies are subdued; he is declared priest forever after Melchizedek.",
+      "nt_refs": ["MAT.22.44", "HEB.1.13"],
+      "nt_label": "Christ — Reigning at God's Right Hand",
+      "nt_desc": "Jesus cites Psalm 110:1 to demonstrate that the Messiah is more than David's descendant (Matt 22:41–46). The NT quotes Psalm 110 more than any other OT passage to explain Christ's exaltation and continuing priestly work.",
+      "category": "person",
+      "note": "Psalm 110 is the most-quoted OT passage in the NT. It establishes Christ's session at the right hand of the Father (Acts 2:34–35; Heb 1:3, 13), his conquest of enemies (1 Cor 15:25), and his eternal priesthood (Heb 5:6; 7:17)."
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" class="dark-mode">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Berean — Free Bible study and sermon preparation platform for pastors" />
+  <meta name="theme-color" content="#121212" />
+
+  <!-- PWA -->
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="apple-touch-icon" href="/assets/icon-192.png" />
+
+  <!-- Open Graph (populated by Cloudflare Worker HTMLRewriter for /s/:id routes) -->
+  <meta property="og:title" content="Berean Bible Study" />
+  <meta property="og:description" content="Free sermon preparation and Bible study platform" />
+  <meta property="og:type" content="website" />
+
+  <title>Berean</title>
+
+  <!-- Cloudflare Worker URL — update if redeployed -->
+  <script>
+    window.__bereanConfig = {
+      workerUrl: 'https://berean-worker.pcchristensen1.workers.dev',
+    };
+  </script>
+
+  <!-- Google Identity Services (for Google Drive OAuth sync) -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+  <!-- Entry point — Vite processes this -->
+  <script type="module" src="/src/main.js"></script>
+</head>
+<body>
+  <!-- App shell — populated by main.js -->
+  <div id="app">
+    <!-- Loading screen shown before JS hydrates -->
+    <div id="loading-screen" aria-live="polite" aria-label="Loading Berean">
+      <div class="loading-logo">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <!-- Book icon -->
+          <rect x="4" y="8" width="18" height="32" rx="2" fill="#D4AF37" opacity="0.9"/>
+          <rect x="26" y="8" width="18" height="32" rx="2" fill="#D4AF37" opacity="0.6"/>
+          <line x1="22" y1="8" x2="22" y2="40" stroke="#121212" stroke-width="2"/>
+        </svg>
+      </div>
+      <p class="loading-text">Loading Berean…</p>
+    </div>
+  </div>
+
+  <!-- Fallback for no-JS -->
+  <noscript>
+    <p style="padding:2rem;font-family:sans-serif;color:#E8E6E1;background:#121212;">
+      Berean requires JavaScript to run. Please enable JavaScript in your browser.
+    </p>
+  </noscript>
+</body>
+</html>

@@ -1,0 +1,44 @@
+# Build output
+dist/
+
+# Dependencies
+node_modules/
+
+# SQLite databases (large binary files — rebuilt by build scripts)
+public/db/*.sqlite3
+public/db/*.sqlite3.*
+public/db/*.chunk
+public/db/*.config.json
+
+# WebAssembly
+public/sql-wasm.wasm
+public/sqlite.worker.js
+
+# Fonts (self-hosted — download separately)
+public/fonts/
+
+# Source data (large downloads — not part of the codebase)
+scripts/source-data/
+
+# Repomix snapshot (generated before each session — not committed)
+repomix-snapshot.xml
+repomix-output.*
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment
+.env
+.env.local
+
+# Claude Code local settings (keep project settings.json, not local overrides)
+.claude/settings.local.json
+
+# MCP config contains local absolute paths — not portable between machines
+.mcp.json

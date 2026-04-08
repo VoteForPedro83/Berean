@@ -1,0 +1,53 @@
+{
+  "output": {
+    "style": "xml",
+    "filePath": "repomix-snapshot.xml",
+    "compress": true,
+    "removeComments": false,
+    "showLineNumbers": false,
+    "copyToClipboard": false,
+    "headerText": "Berean Bible Study Platform — Codebase Snapshot\nStack: Vite + Tailwind v4 + Vanilla JS + sql.js-httpvfs + TipTap\nStage: See BUILD_STATUS.md for current progress."
+  },
+  "include": [
+    "src/**/*.js",
+    "src/**/*.css",
+    "index.html",
+    "vite.config.js",
+    "tailwind.config.js",
+    "worker/cloudflare-worker.js",
+    "data/translations/*.json",
+    "data/books.js",
+    "data/verse-of-day.json",
+    "package.json"
+  ],
+  "ignore": {
+    "useDefaultPatterns": true,
+    "useGitignore": true,
+    "customPatterns": [
+      "dist/**",
+      "node_modules/**",
+      "public/db/**",
+      "public/fonts/**",
+      "public/assets/**",
+      "public/sql-wasm.wasm",
+      "public/sqlite.worker.js",
+      "public/manifest.json",
+      "scripts/source-data/**",
+      "scripts/**",
+      "**/*.sqlite3",
+      "**/*.wasm",
+      "**/*.ttf",
+      "**/*.woff",
+      "**/*.woff2",
+      "**/*.map",
+      "**/*.chunk",
+      "repomix-snapshot.xml",
+      "repomix.config.json",
+      "package-lock.json",
+      "CLAUDE.md"
+    ]
+  },
+  "security": {
+    "enableSecretDetection": true
+  }
+}

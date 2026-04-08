@@ -1,0 +1,342 @@
+/* ============================================================
+   interlinear.css — Word stack layout for Greek and Hebrew
+   Handles bidirectional text, stack alignment, and hover states
+   ============================================================ */
+
+/* ── Word Stack Container ────────────────────────────────── */
+.word-stack {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.125rem;
+  padding: 0.25rem var(--space-word-gap);
+  border-radius: var(--radius-ui);
+  cursor: pointer;
+  transition:
+    background-color var(--duration-fast) var(--ease-berean),
+    outline var(--duration-fast) var(--ease-berean);
+  vertical-align: top;
+}
+
+.word-stack:hover,
+.word-stack:focus-visible {
+  background-color: var(--color-surface-raised);
+}
+
+.word-stack:focus-visible {
+  outline: 2px solid var(--color-accent-gold);
+  outline-offset: 1px;
+}
+
+/* Active/selected word (when Tippy popup is open) */
+.word-stack[data-active="true"] {
+  background-color: var(--color-surface-raised);
+  outline: 2px solid var(--color-accent-gold);
+  outline-offset: 1px;
+}
+
+/* ── Interlinear Row Container ───────────────────────────── */
+.interlinear-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 0.25rem var(--space-word-gap);
+  line-height: 1;
+  padding: var(--space-verse-gap) 0;
+}
+
+/* Hebrew rows flow right-to-left */
+.interlinear-row[data-lang="hebrew"] {
+  direction: rtl;
+}
+
+/* ── Source Text (Greek / Hebrew) ────────────────────────── */
+.source-text {
+  font-size: var(--font-interlinear-src);
+  line-height: 1.4;
+  font-weight: 400;
+}
+
+.source-text.greek {
+  font-family: "Gentium Plus", "Times New Roman", serif;
+  color: var(--color-ink-scripture);
+}
+
+.source-text.hebrew {
+  font-family: "Ezra SIL OT", "Times New Roman", serif;
+  color: var(--color-ink-scripture);
+  /* Always isolate Hebrew to prevent BiDi contamination */
+  unicode-bidi: isolate;
+}
+
+/* ── Transliteration ─────────────────────────────────────── */
+.transliteration {
+  font-family: var(--font-ui);
+  font-size: var(--font-interlinear-meta);
+  color: var(--color-ink-secondary);
+  font-style: italic;
+  white-space: nowrap;
+}
+
+/* ── English Gloss ───────────────────────────────────────── */
+.english-gloss {
+  font-family: var(--font-ui);
+  font-size: var(--font-interlinear-meta);
+  color: var(--color-ink-primary);
+  white-space: nowrap;
+}
+
+/* ── Morphology Tag ──────────────────────────────────────── */
+.morph-tag {
+  font-family: "Fira Code", "Consolas", monospace;
+  font-size: calc(var(--font-interlinear-meta) - 0.0625rem); /* 11px */
+  color: var(--color-ink-muted);
+  white-space: nowrap;
+  letter-spacing: -0.025em;
+}
+
+/* ── Strong's Number ─────────────────────────────────────── */
+.strongs-number {
+  font-family: "Fira Code", "Consolas", monospace;
+  font-size: calc(var(--font-interlinear-meta) - 0.0625rem);
+  color: var(--color-accent-gold);
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.strongs-number:hover {
+  text-decoration: underline;
+}
+
+/* ── Hapax Legomena ──────────────────────────────────────── */
+/* Dotted underline on source text for words appearing only once in the Bible */
+.word-stack[data-hapax="true"] .source-text {
+  text-decoration: underline dotted var(--color-accent-burgundy);
+  text-underline-offset: 3px;
+}
+
+/* ── NT Quotation of OT ──────────────────────────────────── */
+/* Wavy underline on source text for NT quotations of OT passages */
+.word-stack[data-nt-ot-quote="true"] .source-text {
+  text-decoration: underline wavy var(--color-accent-sage);
+  text-underline-offset: 4px;
+}
+
+/* ── Textual Variant ─────────────────────────────────────── */
+.word-stack[data-variant="true"] .source-text {
+  color: var(--color-accent-burgundy);
+}
+
+/* ── Interlinear Tints ───────────────────────────────────── */
+/* Optional tinted backgrounds for language toggle */
+.interlinear-row[data-lang="greek"] .word-stack:hover {
+  background-color: color-mix(in srgb, var(--color-greek-tint) 8%, transparent);
+}
+
+.interlinear-row[data-lang="hebrew"] .word-stack:hover {
+  background-color: color-mix(in srgb, var(--color-hebrew-tint) 8%, transparent);
+}
+
+/* ── Strong's Popup (Tippy.js) ───────────────────────────── */
+.tippy-box[data-theme="strongs"] {
+  background-color: var(--color-surface-modal);
+  color: var(--color-ink-primary);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-panel);
+  font-family: var(--font-ui);
+  font-size: 0.875rem;
+  max-width: 360px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+}
+
+.tippy-box[data-theme="strongs"] .tippy-arrow {
+  color: var(--color-surface-modal);
+}
+
+/* Popup inner content */
+.strongs-popup {
+  padding: 0.75rem;
+}
+
+.strongs-popup__header {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.strongs-popup__id {
+  font-family: "Fira Code", monospace;
+  font-size: 0.75rem;
+  color: var(--color-accent-gold);
+}
+
+.strongs-popup__lemma {
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.strongs-popup__lemma.greek {
+  font-family: "Gentium Plus", serif;
+}
+
+.strongs-popup__lemma.hebrew {
+  font-family: "Ezra SIL OT", serif;
+  direction: rtl;
+  unicode-bidi: isolate;
+}
+
+.strongs-popup__transliteration {
+  font-style: italic;
+  color: var(--color-ink-secondary);
+  font-size: 0.8125rem;
+}
+
+.strongs-popup__definition {
+  color: var(--color-ink-primary);
+  line-height: 1.5;
+  font-size: 0.875rem;
+}
+
+.strongs-popup__tabs {
+  display: flex;
+  gap: 0.25rem;
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+.strongs-popup__tab {
+  flex: 1;
+  padding: 0.25rem 0.5rem;
+  background: var(--color-surface-raised);
+  border: none;
+  border-radius: var(--radius-ui);
+  color: var(--color-ink-secondary);
+  font-size: 0.75rem;
+  cursor: pointer;
+  font-family: var(--font-ui);
+  transition: background-color var(--duration-fast) var(--ease-berean),
+              color var(--duration-fast) var(--ease-berean);
+}
+
+.strongs-popup__tab:hover {
+  background: var(--color-surface-modal);
+  color: var(--color-ink-primary);
+}
+
+.strongs-popup__tab[data-active="true"] {
+  background: var(--color-accent-gold);
+  color: #0A0A0A;
+  font-weight: 600;
+}
+
+/* ── Textual variant / absent verse note ─────────────────── */
+.interlinear-absent-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin: 0.5rem 0;
+  padding: 0.5rem 0.75rem;
+  border-left: 2px solid var(--color-accent-burgundy);
+  border-radius: 0 var(--radius-ui) var(--radius-ui) 0;
+  background: color-mix(in srgb, var(--color-accent-burgundy) 8%, transparent);
+  font-size: var(--font-ui-label);
+  color: var(--color-ink-secondary);
+  font-style: italic;
+}
+
+.interlinear-absent-note .absent-icon {
+  color: var(--color-accent-burgundy);
+  font-style: normal;
+  font-size: 1rem;
+  flex-shrink: 0;
+  margin-top: 0.05rem;
+}
+
+/* ============================================================
+   Reading-pane textual variant styles
+   Applies in normal reading mode (non-interlinear)
+   ============================================================ */
+
+/* ── Range banner ─────────────────────────────────────────── */
+/* Shown once before the first verse of a named late addition  */
+.variant-range-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.625rem;
+  margin: 1rem 0 0.25rem;
+  padding: 0.625rem 0.875rem;
+  border-left: 3px solid var(--color-accent-burgundy);
+  border-radius: 0 var(--radius-ui) var(--radius-ui) 0;
+  background: color-mix(in srgb, var(--color-accent-burgundy) 7%, transparent);
+}
+
+.variant-range-banner__icon {
+  color: var(--color-accent-burgundy);
+  font-size: 1.0625rem;
+  flex-shrink: 0;
+  margin-top: 0.125rem;
+  line-height: 1;
+}
+
+.variant-range-banner__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.variant-range-banner__label {
+  font-family: var(--font-ui);
+  font-size: var(--font-ui-label);
+  color: var(--color-accent-burgundy);
+  font-weight: 600;
+}
+
+.variant-range-banner__note {
+  font-family: var(--font-ui);
+  font-size: calc(var(--font-ui-label) - 0.0625rem);
+  color: var(--color-ink-secondary);
+  font-style: italic;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* ── Per-verse variant note ───────────────────────────────── */
+/* Rendered as a SIBLING after the verse-container, never       */
+/* inside it — so the verse layout is completely unchanged.     */
+.variant-verse-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.375rem;
+  /* Indent to align with verse text (verse-number min-width 1.75rem + gap 0.5rem) */
+  padding-left: calc(1.75rem + 0.5rem);
+  margin-top: calc(-1 * var(--space-verse-gap, 0.75rem) + 0.125rem);
+                          /* pull up close to the verse above */
+  font-family: var(--font-ui);
+  font-size: calc(var(--font-ui-label) - 0.0625rem); /* ~13px */
+  color: var(--color-ink-muted);
+  font-style: italic;
+  line-height: 1.45;
+}
+
+.variant-verse-note__icon {
+  color: var(--color-accent-burgundy);
+  font-style: normal;
+  flex-shrink: 0;
+  margin-top: 0.05rem;
+}
+
+.variant-verse-note--disputed .variant-verse-note__icon {
+  color: var(--color-ink-secondary);
+}
+
+/* Reduce motion — no transitions needed here, but keep consistent */
+@media (prefers-reduced-motion: reduce) {
+  .variant-range-banner,
+  .variant-verse-note {
+    transition-duration: 0ms !important;
+  }
+}

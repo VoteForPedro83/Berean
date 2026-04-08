@@ -1,0 +1,36 @@
+{
+  "name": "Berean Bible Study",
+  "short_name": "Berean",
+  "description": "Free, non-commercial Bible study and sermon preparation platform for pastors",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#121212",
+  "theme_color": "#121212",
+  "lang": "en",
+  "categories": ["education", "books", "productivity"],
+  "icons": [
+    {
+      "src": "/assets/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Open Bible Reader",
+      "short_name": "Read",
+      "description": "Open the Bible reading pane",
+      "url": "/#JHN.1.1",
+      "icons": [{ "src": "/assets/icon.svg", "sizes": "any" }]
+    },
+    {
+      "name": "New Sermon",
+      "short_name": "Sermon",
+      "description": "Start a new sermon",
+      "url": "/#/sermon/new",
+      "icons": [{ "src": "/assets/icon.svg", "sizes": "any" }]
+    }
+  ]
+}

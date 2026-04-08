@@ -1,0 +1,178 @@
+{
+  "app": {
+    "name": "Berean",
+    "tagline": "Serious Bible Study for Pastors"
+  },
+  "nav": {
+    "study": "Study Mode",
+    "sermon": "Sermon Builder",
+    "search": "Search",
+    "maps": "Maps & Timeline",
+    "settings": "Settings"
+  },
+  "bible": {
+    "chapterOf": "Chapter {{chapter}} of {{book}}",
+    "goToVerse": "Go to verse",
+    "previousChapter": "Previous chapter",
+    "nextChapter": "Next chapter",
+    "bookmarkVerse": "Bookmark this verse",
+    "copyVerse": "Copy verse",
+    "sendToClippings": "Send to clippings",
+    "interlinear": "Toggle interlinear",
+    "translations": "Translations",
+    "loadingVerses": "Loading verses…",
+    "errorLoading": "Could not load this passage. Please check your connection."
+  },
+  "search": {
+    "placeholder": "Search the Bible, topics, people, places…",
+    "noResults": "No results found for "{{query}}"",
+    "resultsCount": "{{count}} results",
+    "inBook": "in {{book}}",
+    "allBooks": "All books",
+    "ot": "Old Testament",
+    "nt": "New Testament",
+    "searchByStrongs": "Search by Strong's number (e.g. G25)"
+  },
+  "commentary": {
+    "title": "Commentaries",
+    "sources": {
+      "MHC": "Matthew Henry",
+      "JFB": "Jamieson, Fausset & Brown",
+      "BARNES": "Albert Barnes",
+      "IDS": "In die Skriflig",
+      "HTS": "HTS Teologiese Studies"
+    },
+    "summarise": "Summarise with AI",
+    "loading": "Loading commentary…",
+    "noContent": "No commentary available for this passage."
+  },
+  "crossrefs": {
+    "title": "Cross-References",
+    "sources": {
+      "openbible": "OpenBible",
+      "tsk": "Treasury of Scripture",
+      "ubs": "United Bible Societies"
+    },
+    "noRefs": "No cross-references for this verse."
+  },
+  "wordStudy": {
+    "title": "Word Study",
+    "strongsId": "Strong's {{id}}",
+    "definition": "Definition",
+    "grammar": "Grammar",
+    "concordance": "Concordance",
+    "domains": "Semantic Domains",
+    "occurrences": "{{count}} occurrence(s) in the Bible",
+    "hapax": "Hapax legomenon — appears only once in the Bible",
+    "aiExplain": "Ask AI to explain this grammar"
+  },
+  "sermon": {
+    "newSermon": "New Sermon",
+    "untitledSermon": "Untitled Sermon",
+    "saveStatus": {
+      "saving": "Saving…",
+      "saved": "Saved",
+      "error": "Save failed"
+    },
+    "export": "Export Sermon",
+    "exportFormats": {
+      "docx": "Word Document (.docx)",
+      "pdf": "PDF",
+      "txt": "Plain Text",
+      "html": "Web Page"
+    },
+    "presentation": "Launch Presentation",
+    "passageGuide": "Generate Passage Guide",
+    "checklist": "Exegetical Checklist"
+  },
+  "ai": {
+    "disclaimer": "AI-generated research assistance — verify all claims against scripture.",
+    "thinking": "Thinking…",
+    "streaming": "Generating…",
+    "error": "AI request failed. Check your API key in Settings.",
+    "fallback": "Switched to free Gemini — {{originalProvider}} limit reached.",
+    "noKey": "No API key configured. Add one in Settings → AI Keys.",
+    "abort": "Stop generating"
+  },
+  "settings": {
+    "title": "Settings",
+    "theme": "Appearance",
+    "themeDark": "Dark (Scholar)",
+    "themeLight": "Light (Print)",
+    "language": "Language",
+    "fontSize": "Scripture Font Size",
+    "fontSizeSmall": "Small",
+    "fontSizeDefault": "Default",
+    "fontSizeLarge": "Large",
+    "fontSizeXL": "Extra Large",
+    "aiKeys": "AI API Keys",
+    "aiProvider": "Provider",
+    "aiKeyLabel": "API Key",
+    "aiKeySave": "Save Key",
+    "aiKeyDelete": "Remove Key",
+    "aiKeyPin": "4-digit PIN to protect your key",
+    "about": "About Berean",
+    "version": "Version {{version}}",
+    "openSource": "Open-source, free forever",
+    "licence": "Non-commercial — for the Body of Christ"
+  },
+  "onboarding": {
+    "step1": {
+      "title": "Welcome to Berean",
+      "body": "A free, scholar-grade Bible study platform built for pastors. Let us show you around."
+    },
+    "step2": {
+      "title": "The Sidebar",
+      "body": "Five destinations: Study Mode, Sermon Builder, Search, Maps, and Settings."
+    },
+    "step3": {
+      "title": "The Bible Pane",
+      "body": "Navigate chapters with Alt+← and Alt+→, or click the book name to jump anywhere."
+    },
+    "step4": {
+      "title": "Verse Actions",
+      "body": "Hover over any verse number to bookmark, copy, or send it to your sermon clippings."
+    },
+    "step5": {
+      "title": "Interlinear",
+      "body": "Press Ctrl+I to toggle the original Greek or Hebrew under every word, with morphology tags."
+    },
+    "step6": {
+      "title": "Strong's Lookup",
+      "body": "Click any original-language word to see its Strong's definition, semantic domain, and all occurrences."
+    },
+    "step7": {
+      "title": "Command Palette",
+      "body": "Press Ctrl+K to search passages, topics, people, places, and commands from anywhere."
+    },
+    "step8": {
+      "title": "AI Assistant",
+      "body": "Press Ctrl+/ to ask the AI to explain, summarise, or translate any passage. Add your own API key in Settings for full access."
+    },
+    "step9": {
+      "title": "Sermon Builder",
+      "body": "Build sermons with TipTap's rich editor. Drag in scripture, illustrations, and clippings from your research."
+    },
+    "step10": {
+      "title": "You're Ready",
+      "body": "Everything runs in your browser — no account, no server, no ads. Go study the Word."
+    },
+    "next": "Next",
+    "previous": "Previous",
+    "finish": "Let's Go",
+    "skip": "Skip tour"
+  },
+  "toast": {
+    "bookmarkAdded": "Verse bookmarked",
+    "bookmarkRemoved": "Bookmark removed",
+    "copiedToClipboard": "Copied to clipboard",
+    "sentToClippings": "Sent to clippings",
+    "keyboardShortcut": "Keyboard shortcut: {{shortcut}}"
+  },
+  "errors": {
+    "dbNotLoaded": "Database not yet loaded. Please wait a moment.",
+    "verseNotFound": "Verse not found: {{osisId}}",
+    "networkError": "Network error — working in offline mode.",
+    "idbError": "Could not save data locally. Storage may be full."
+  }
+}
