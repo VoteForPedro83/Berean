@@ -5,3 +5,10 @@
 
 /db/*
   Cache-Control: public, max-age=31536000, immutable
+  Accept-Ranges: bytes
+  Content-Type: application/octet-stream
+
+/db/chunks/*
+  Cache-Control: public, max-age=31536000, immutable
+  Accept-Ranges: bytes
+  Content-Type: application/octet-stream
