@@ -42,3 +42,7 @@ npm-debug.log*
 
 # MCP config contains local absolute paths — not portable between machines
 .mcp.json
+CLAUDE.md
+BUILD_STATUS.md
+docs/
+repomix-snapshot.xml
