@@ -4,18 +4,29 @@ dist/
 # Dependencies
 node_modules/
 
-# SQLite databases (large binary files — rebuilt by build scripts)
-public/db/*.sqlite3
-public/db/*.sqlite3.*
-public/db/*.chunk
-public/db/*.config.json
+# bible_base.sqlite3 is 63 MB — exceeds Cloudflare Pages 25 MB file limit.
+# Use the chunks in public/db/chunks/bible_base/ instead (committed below).
+public/db/bible_base.sqlite3
 
-# WebAssembly
-public/sql-wasm.wasm
-public/sqlite.worker.js
+# Commentaries DB is 299 MB — too large for Cloudflare Pages or git. Skip for now.
+public/db/commentaries.sqlite3
 
-# Fonts (self-hosted — download separately)
-public/fonts/
+# lxx and harmony DBs not yet built
+public/db/lxx.sqlite3
+public/db/harmony.sqlite3
+
+# WAL/SHM temp files
+public/db/*.sqlite3-shm
+public/db/*.sqlite3-wal
+
+# All other DBs (≤25 MB) and chunks are committed — Cloudflare Pages serves them.
+
+# WebAssembly — committed (copied from node_modules, needed at runtime)
+# public/sql-wasm.wasm
+# public/sqlite.worker.js
+
+# Fonts — committed (self-hosted, required at runtime)
+# public/fonts/
 
 # Source data (large downloads — not part of the codebase)
 scripts/source-data/

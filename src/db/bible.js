@@ -65,35 +65,32 @@ export async function initBibleDb() {
 
 async function _doInit() {
   try {
-    // Check if the database file exists before spending time on the worker
-    const probe = await fetch('/db/bible_base.sqlite3', { method: 'HEAD' });
+    // bible_base.sqlite3 is chunked into 20 MB pieces for Cloudflare Pages (25 MB file limit).
+    // The config.json describes the chunking to sql.js-httpvfs.
+    const configUrl = '/db/chunks/bible_base/config.json';
+    const probe = await fetch(configUrl, { method: 'HEAD' });
     if (!probe.ok) {
-      console.info('[bible.js] bible_base.sqlite3 not found — using mock data');
+      console.info('[bible.js] bible_base chunks not found — using mock data');
       return false;
     }
 
     // Dynamically import the library
     const { createDbWorker } = await import('sql.js-httpvfs');
 
-    // Worker and WASM are copied to public/ (run: cp node_modules/sql.js-httpvfs/dist/sqlite.worker.js public/)
-    // This approach works reliably in both Vite dev mode and production build.
+    // Worker and WASM are in public/ (committed to git from node_modules/sql.js-httpvfs/dist/).
     const workerUrl = '/sqlite.worker.js';
     const wasmUrl   = '/sql-wasm.wasm';
 
     _dbWorker = await createDbWorker(
       [
         {
-          from: 'inline',
-          config: {
-            serverMode:       'full',         // Single file — no chunking needed for dev
-            url:              '/db/bible_base.sqlite3',
-            requestChunkSize: 4096,           // Match SQLite page size (pragma page_size=4096)
-          },
+          from: 'jsonconfig',   // reads /db/chunks/bible_base/config.json at runtime
+          configUrl,
         },
       ],
       workerUrl,
       wasmUrl,
-      1024 * 1024 * 128  // Max 128 MB to read (our DB is ~56 MB)
+      1024 * 1024 * 128  // Max 128 MB to read
     );
 
     // Quick sanity check

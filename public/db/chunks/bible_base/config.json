@@ -1,0 +1,8 @@
+{
+  "serverMode": "chunked",
+  "urlPrefix": "/db/chunks/bible_base/",
+  "serverChunkSize": 20971520,
+  "requestChunkSize": 4096,
+  "databaseLengthBytes": 66068480,
+  "suffixLength": 3
+}
