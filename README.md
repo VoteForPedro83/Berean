@@ -44,9 +44,14 @@ The platform is particularly focused on South Africa, where millions of believer
 - Export to TXT, Markdown, PDF, and self-contained offline HTML
 
 ### Study Sessions
-- Create shareable study packs from sermons
+- Create shareable study packs directly from a prepared sermon
+- Church members can study deeper into the sermon topic during the week
+- Share via WhatsApp as a link, making it accessible to any community that communicates on WhatsApp
+- Works for group Bible studies and for individuals studying on their own
 - QR code sharing that works fully offline without a server
-- Mobile-optimised participant view
+- Mobile-optimised participant view with no app download required
+
+Many communities across Africa communicate almost exclusively via WhatsApp. Berean study sessions are designed with this in mind. A pastor prepares a sermon, generates a study pack in one click, and shares the link in the church WhatsApp group. Members can then engage with the passage, the outline, and the discussion questions individually or together, whether or not they have access to a church building or a reliable internet connection.
 
 ### Privacy and Sync
 - All notes stored locally in the browser (never sent to any server)
