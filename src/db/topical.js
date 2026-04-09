@@ -17,12 +17,13 @@ export async function initTopicalDb() {
 
 async function _doInit() {
   try {
-    const probe = await fetch('/db/topical.sqlite3', { method: 'HEAD' });
-    if (!probe.ok) { console.info('[topical.js] topical.sqlite3 not found'); return false; }
+    const configUrl = '/db/chunks/topical/config.json';
+    const probe = await fetch(configUrl, { method: 'HEAD' });
+    if (!probe.ok) { console.info('[topical.js] topical chunks not found'); return false; }
 
     const { createDbWorker } = await import('sql.js-httpvfs');
     _dbWorker = await createDbWorker(
-      [{ from: 'inline', config: { serverMode: 'full', url: '/db/topical.sqlite3', requestChunkSize: 4096 } }],
+      [{ from: 'jsonconfig', configUrl }],
       '/sqlite.worker.js', '/sql-wasm.wasm', 1024 * 1024 * 64
     );
 

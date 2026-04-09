@@ -19,15 +19,16 @@ export async function initTranslationsDb() {
 
 async function _doInit() {
   try {
-    const probe = await fetch('/db/translations_cc.sqlite3', { method: 'HEAD' });
+    const configUrl = '/db/chunks/translations_cc/config.json';
+    const probe = await fetch(configUrl, { method: 'HEAD' });
     if (!probe.ok) {
-      console.info('[translations.js] translations_cc.sqlite3 not found — CC translations unavailable');
+      console.info('[translations.js] translations_cc chunks not found — CC translations unavailable');
       return false;
     }
 
     const { createDbWorker } = await import('sql.js-httpvfs');
     _dbWorker = await createDbWorker(
-      [{ from: 'inline', config: { serverMode: 'full', url: '/db/translations_cc.sqlite3', requestChunkSize: 4096 } }],
+      [{ from: 'jsonconfig', configUrl }],
       '/sqlite.worker.js', '/sql-wasm.wasm',
       1024 * 1024 * 64   // 64 MB max (translations_cc is ~2.8 MB)
     );

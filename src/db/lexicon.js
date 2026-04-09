@@ -21,25 +21,17 @@ export async function initLexiconDb() {
 
 async function _doInit() {
   try {
-    const probe = await fetch('/db/lexicon.sqlite3', { method: 'HEAD' });
+    const configUrl = '/db/chunks/lexicon/config.json';
+    const probe = await fetch(configUrl, { method: 'HEAD' });
     if (!probe.ok) {
-      console.info('[lexicon.js] lexicon.sqlite3 not found');
+      console.info('[lexicon.js] lexicon chunks not found');
       return false;
     }
 
     const { createDbWorker } = await import('sql.js-httpvfs');
 
     _dbWorker = await createDbWorker(
-      [
-        {
-          from: 'inline',
-          config: {
-            serverMode:       'full',
-            url:              '/db/lexicon.sqlite3',
-            requestChunkSize: 4096,
-          },
-        },
-      ],
+      [{ from: 'jsonconfig', configUrl }],
       '/sqlite.worker.js',
       '/sql-wasm.wasm',
       1024 * 1024 * 16  // 16 MB max — lexicon is ~6 MB

@@ -1,0 +1,8 @@
+{
+  "serverMode": "chunked",
+  "urlPrefix": "/db/chunks/morphgnt/",
+  "serverChunkSize": 19185664,
+  "requestChunkSize": 4096,
+  "databaseLengthBytes": 19185664,
+  "suffixLength": 3
+}

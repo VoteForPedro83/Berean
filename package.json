@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "prebuild": "node scripts/setup-db-chunks.js",
     "build": "vite build",
     "preview": "vite preview",
     "chunk-bible": "node scripts/chunk-bible.js"

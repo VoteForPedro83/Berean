@@ -17,12 +17,13 @@ export async function initCrossRefsDb() {
 
 async function _doInit() {
   try {
-    const probe = await fetch('/db/cross_refs.sqlite3', { method: 'HEAD' });
-    if (!probe.ok) { console.info('[crossrefs.js] cross_refs.sqlite3 not found'); return false; }
+    const configUrl = '/db/chunks/cross_refs/config.json';
+    const probe = await fetch(configUrl, { method: 'HEAD' });
+    if (!probe.ok) { console.info('[crossrefs.js] cross_refs chunks not found'); return false; }
 
     const { createDbWorker } = await import('sql.js-httpvfs');
     _dbWorker = await createDbWorker(
-      [{ from: 'inline', config: { serverMode: 'full', url: '/db/cross_refs.sqlite3', requestChunkSize: 4096 } }],
+      [{ from: 'jsonconfig', configUrl }],
       '/sqlite.worker.js', '/sql-wasm.wasm', 1024 * 1024 * 64
     );
 

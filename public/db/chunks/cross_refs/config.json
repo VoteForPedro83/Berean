@@ -1,0 +1,8 @@
+{
+  "serverMode": "chunked",
+  "urlPrefix": "/db/chunks/cross_refs/",
+  "serverChunkSize": 20135936,
+  "requestChunkSize": 4096,
+  "databaseLengthBytes": 20135936,
+  "suffixLength": 3
+}

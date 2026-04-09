@@ -1,0 +1,8 @@
+{
+  "serverMode": "chunked",
+  "urlPrefix": "/db/chunks/narrative/",
+  "serverChunkSize": 9781248,
+  "requestChunkSize": 4096,
+  "databaseLengthBytes": 9781248,
+  "suffixLength": 3
+}
