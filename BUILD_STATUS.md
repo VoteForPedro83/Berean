@@ -9,9 +9,14 @@
 
 **Current Stage:** STAGE 6 — Complete ✅ · Polish / Bug fixes ongoing
 **Overall Progress:** Stage 1 ✅ · Stage 2 ✅ · Stage 3 ✅ · Stage 4 ✅ · Stage 5 ✅ · Stage 6 ✅
-**Last Session:** 2026-04-05 (session 2)
+**Last Session:** 2026-04-09
 
 **Last Completed Task:**
+UX polish session — no new features:
+- **Right panel tab menu redesign** — `src/main.js` — replaced single scrolling row with `display:grid; grid-template-columns:repeat(6,1fr)` — always 2 rows of 6, stretches/compresses with panel width, never disappears. Tabs reordered logically: Row 1 (study tools): Commentary · Cross-Refs · Word Study · Topics · Typology · Map. Row 2 (sermon prep): Guide · Exegesis · AI ✦ · Timeline · Graph · Plan. Row separator via `border-top` on `nth-child(n+7)`. Labels truncate with `text-overflow:ellipsis` at narrow widths.
+- **Settings: multi-provider AI info box** — `src/components/settings/byok-modal.js` + `src/main.js` — added sage-tinted info box at top of AI API Keys section explaining that multiple keys can be added and the system auto-selects/falls back across providers when rate-limited.
+
+**Previous session task:**
 Bug fixes and UX polish session — no new features:
 - **Graph: Clear button** — `src/components/study/entity-graph.js` — added `✕ Clear` button that appears in the graph header when a node is tapped; hides on click and resets all dim/highlight. Added `_clearSelection()` helper. CSS added in `src/main.js` (`.eg__clear`).
 - **Settings modal: silent failure fixed** — `src/components/settings/byok-modal.js` — `openSettings()` had no error handling; if `getGithubToken()` or `getGoogleClientId()` threw (e.g. IDB at older schema version), the entire function failed silently and the modal never opened. Fixed: each of the three data-fetches now has its own `try/catch` with safe fallback (null/[]). Also added null-guard re-fetch of `dialog` element. Also fixed `showModal()` double-open error with `if (!dialog.open)` guard.
