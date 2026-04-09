@@ -1,20 +1,20 @@
 # Berean
 
-**Free, offline Bible study and sermon preparation platform for pastors and Bible teachers.**
+**Free, offline Bible study platform for the whole church — with sermon preparation tools for pastors and Bible teachers.**
 
-Berean is built for pastors — especially those in Africa — who need serious Bible study tools without a subscription, an account, or an internet connection. It is permanently free, carries no advertising, and collects no data.
+Berean is built for every believer — especially those in Africa — who wants to study the Bible seriously without a subscription, an account, or an internet connection. It is permanently free, carries no advertising, and collects no data.
 
 ---
 
 ## Who it is for
 
-Berean exists to serve pastors and Bible teachers who:
-- Preach in languages other than English
-- Work in areas with unreliable internet
-- Cannot afford commercial Bible software (Logos, Accordance, Faithlife)
-- Need to prepare sermons, lead Bible studies, and disciple others
+Berean is for the whole church:
+- **Everyday believers** who want to read and study the Bible in depth
+- **Small group leaders** preparing discussion and teaching material
+- **Pastors and Bible teachers** who need full sermon preparation tools
+- **Anyone** who worships in a language other than English and deserves the same quality of Bible software
 
-The platform is particularly focused on South Africa, where millions of believers worship in Afrikaans, isiZulu, isiXhosa, Sesotho, Sepedi, Xitsonga, and Setswana — languages that are underserved by existing Bible software.
+The platform is particularly focused on South Africa, where millions of believers worship in Afrikaans, isiZulu, isiXhosa, Sesotho, Sepedi, Xitsonga, and Setswana — languages that are underserved by existing Bible software. It is designed to be accessible to anyone who cannot afford commercial tools like Logos, Accordance, or Faithlife.
 
 ---
 
