@@ -47,6 +47,13 @@ export async function deleteRead(id) {
   await db.delete('ReadingJournal', id);
 }
 
+/** Remove all read entries for a chapter (used to toggle unread). */
+export async function deleteAllReadsForChapter(osisRef) {
+  const db = await getDB();
+  const records = await db.getAllFromIndex('ReadingJournal', 'osisRef', osisRef);
+  await Promise.all(records.map(r => db.delete('ReadingJournal', r.id)));
+}
+
 // ── Read ──────────────────────────────────────────────────
 
 // All reads, newest first

@@ -25,7 +25,7 @@ import {
 } from '../../data/textual-variants.js';
 import { getNtOtQuotesForChapter } from '../../db/crossrefs.js';
 import { getVerseNumbersForPerson } from '../../db/narrative.js';
-import { logRead, getChapterReadCount } from '../../idb/reading-journal.js';
+import { logRead, deleteAllReadsForChapter, getChapterReadCount } from '../../idb/reading-journal.js';
 import { toast } from '../layout/toast.js';
 
 let _pane = null;
@@ -159,13 +159,19 @@ export function initReadingPane() {
     _toggleTranslationPicker(e.currentTarget);
   });
 
-  // Mark as read
+  // Mark as read — toggle: mark if not read, unmark if already read
   document.getElementById('btn-mark-read').addEventListener('click', async () => {
     const { book, chapter } = _current;
     const osisRef = `${book}.${chapter}`;
     const { name } = BOOKS.find(b => b.osis === book) || {};
-    await logRead(osisRef, book, chapter);
-    toast(`${name ?? book} ${chapter} logged ✓`, 'info');
+    const count = await getChapterReadCount(osisRef);
+    if (count > 0) {
+      await deleteAllReadsForChapter(osisRef);
+      toast(`${name ?? book} ${chapter} unmarked`, 'info');
+    } else {
+      await logRead(osisRef, book, chapter);
+      toast(`${name ?? book} ${chapter} logged ✓`, 'info');
+    }
     _updateMarkReadBtn(book, chapter);
   });
 
