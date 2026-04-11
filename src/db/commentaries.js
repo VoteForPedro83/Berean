@@ -17,12 +17,16 @@ export async function initCommentaryDb() {
 
 async function _doInit() {
   try {
-    const probe = await fetch('/db/commentaries.sqlite3', { method: 'HEAD' });
-    if (!probe.ok) { console.info('[commentaries.js] commentaries.sqlite3 not found'); return false; }
-
+    const { DB_CHUNKS }      = await import('./chunks-manifest.js');
     const { createDbWorker } = await import('sql.js-httpvfs');
+
+    if (!DB_CHUNKS.commentaries) {
+      console.info('[commentaries.js] commentaries not in chunks manifest — skipping');
+      return false;
+    }
+
     _dbWorker = await createDbWorker(
-      [{ from: 'inline', config: { serverMode: 'full', url: '/db/commentaries.sqlite3', requestChunkSize: 4096 } }],
+      [{ from: 'inline', config: DB_CHUNKS.commentaries }],
       '/sqlite.worker.js', '/sql-wasm.wasm', 1024 * 1024 * 128
     );
 

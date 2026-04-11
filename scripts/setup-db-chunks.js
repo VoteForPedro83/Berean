@@ -1,19 +1,23 @@
 #!/usr/bin/env node
 /**
  * setup-db-chunks.js
- * Wraps each small SQLite database as a single-chunk sql.js-httpvfs config.
+ * Wraps each SQLite database as sql.js-httpvfs chunked config.
  * Run automatically as "prebuild" before `vite build`.
  *
  * Each database chunk lives at a content-hash-versioned URL:
- *   public/db/chunks/<name>/<sha256-hash>/000
+ *   public/db/chunks/<name>/<sha256-hash>/000[, 001, 002, ...]
+ *
+ * Cloudflare Pages has a 26 MB per-file limit. Databases larger than
+ * MAX_CHUNK_BYTES are automatically split into multiple numbered files
+ * (000, 001, …) — sql.js-httpvfs natively supports this pattern.
  *
  * The config is written into src/db/chunks-manifest.js so Vite bundles it
  * directly into the JS — no runtime fetch of config.json at all.
  * This avoids CDN caching issues where config.json could be stale.
  *
  * When a database changes → hash changes → manifest changes → Vite produces
- * a new bundle hash → browser fetches the new bundle → new chunk URL is
- * fetched fresh (CDN has never seen it). No cache purging ever needed.
+ * a new bundle hash → browser fetches the new bundle → new chunk URLs are
+ * fetched fresh (CDN has never seen them). No cache purging ever needed.
  */
 
 import fs     from 'fs';
@@ -26,7 +30,11 @@ const DB_DIR     = path.join(__dirname, '../public/db');
 const CHUNK_DIR  = path.join(__dirname, '../public/db/chunks');
 const MANIFEST   = path.join(__dirname, '../src/db/chunks-manifest.js');
 
+// Cloudflare Pages max file size is 26 MB. Use 24 MB to be safe.
+const MAX_CHUNK_BYTES = 24 * 1024 * 1024;
+
 const DATABASES = [
+  { file: 'commentaries.sqlite3',    name: 'commentaries'    },
   { file: 'cross_refs.sqlite3',      name: 'cross_refs'      },
   { file: 'lexicon.sqlite3',         name: 'lexicon'         },
   { file: 'morphgnt.sqlite3',        name: 'morphgnt'        },
@@ -56,10 +64,14 @@ for (const { file, name } of DATABASES) {
   // Short content hash (first 12 hex chars of SHA-256)
   const hash    = crypto.createHash('sha256').update(data).digest('hex').slice(0, 12);
   const hashDir = path.join(nameDir, hash);
-  const chunk   = path.join(hashDir, '000');
 
-  if (fs.existsSync(chunk)) {
-    console.log(`   ✅ ${name} — unchanged (${(totalBytes / 1024 / 1024).toFixed(2)} MB, hash: ${hash})`);
+  // Determine chunk size: single file if ≤ MAX_CHUNK_BYTES, else split
+  const chunkSize  = totalBytes <= MAX_CHUNK_BYTES ? totalBytes : MAX_CHUNK_BYTES;
+  const numChunks  = Math.ceil(totalBytes / chunkSize);
+  const firstChunk = path.join(hashDir, '000');
+
+  if (fs.existsSync(firstChunk)) {
+    console.log(`   ✅ ${name} — unchanged (${(totalBytes / 1024 / 1024).toFixed(2)} MB, ${numChunks} chunk${numChunks > 1 ? 's' : ''}, hash: ${hash})`);
   } else {
     // Remove old hash subdirectories (orphaned)
     if (fs.existsSync(nameDir)) {
@@ -68,14 +80,21 @@ for (const { file, name } of DATABASES) {
       }
     }
     fs.mkdirSync(hashDir, { recursive: true });
-    fs.writeFileSync(chunk, data);
-    console.log(`   ✅ ${name} — ${(totalBytes / 1024 / 1024).toFixed(2)} MB → chunks/${name}/${hash}/000`);
+
+    for (let i = 0; i < numChunks; i++) {
+      const start  = i * chunkSize;
+      const end    = Math.min(start + chunkSize, totalBytes);
+      const suffix = String(i).padStart(3, '0');
+      fs.writeFileSync(path.join(hashDir, suffix), data.slice(start, end));
+    }
+
+    console.log(`   ✅ ${name} — ${(totalBytes / 1024 / 1024).toFixed(2)} MB → ${numChunks} chunk${numChunks > 1 ? 's' : ''} at chunks/${name}/${hash}/`);
   }
 
   manifest[name] = {
     serverMode:          'chunked',
     urlPrefix:           `/db/chunks/${name}/${hash}/`,
-    serverChunkSize:     totalBytes,
+    serverChunkSize:     chunkSize,
     requestChunkSize:    4096,
     databaseLengthBytes: totalBytes,
     suffixLength:        3,
