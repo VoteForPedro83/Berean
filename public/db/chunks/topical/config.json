@@ -1,6 +1,6 @@
 {
   "serverMode": "chunked",
-  "urlPrefix": "/db/chunks/topical/",
+  "urlPrefix": "/db/chunks/topical/3bb5d38292ce/",
   "serverChunkSize": 14467072,
   "requestChunkSize": 4096,
   "databaseLengthBytes": 14467072,

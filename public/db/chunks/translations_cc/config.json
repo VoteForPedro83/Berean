@@ -1,6 +1,6 @@
 {
   "serverMode": "chunked",
-  "urlPrefix": "/db/chunks/translations_cc/",
+  "urlPrefix": "/db/chunks/translations_cc/9c67c48ea4db/",
   "serverChunkSize": 9498624,
   "requestChunkSize": 4096,
   "databaseLengthBytes": 9498624,
