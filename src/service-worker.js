@@ -4,9 +4,9 @@
 
    Caching tiers:
    1. App shell (HTML/CSS/JS/fonts/WASM) — precached at install
-   2. Small DBs (translations_cc, lexicon) — precached at install
-   3. Large chunked DBs (bible_base, morphgnt…) — cache-on-demand
-      with range-request slice support for sql.js-httpvfs
+   2. Chunked SQLite DB files (/db/chunks/**) — cache-first with
+      RangeRequestsPlugin so sql.js-httpvfs gets proper 206 slices
+   3. Legacy full .sqlite3 files — same strategy
 
    IMPORTANT: Range requests (HTTP 206) cannot be stored in
    Cache Storage. We fetch the full chunk (200 OK), store it,
@@ -16,7 +16,7 @@
 import { clientsClaim } from 'workbox-core';
 import { precacheAndRoute, cleanupOutdatedCaches } from 'workbox-precaching';
 import { registerRoute } from 'workbox-routing';
-import { CacheFirst, StaleWhileRevalidate } from 'workbox-strategies';
+import { CacheFirst } from 'workbox-strategies';
 import { RangeRequestsPlugin } from 'workbox-range-requests';
 import { ExpirationPlugin } from 'workbox-expiration';
 import { CacheableResponsePlugin } from 'workbox-cacheable-response';
@@ -31,35 +31,20 @@ clientsClaim();
 cleanupOutdatedCaches();
 precacheAndRoute(self.__WB_MANIFEST || []);
 
-// ── Tier 2: Small DB files (≤2 MB) — cache-first ─────────
-// These are pre-bundled and change rarely.
-const SMALL_DB_CACHE = 'berean-small-dbs-v1';
-
-registerRoute(
-  ({ url }) =>
-    url.pathname.startsWith('/db/') &&
-    (url.pathname.includes('translations_cc') ||
-     url.pathname.includes('lexicon')),
-  new CacheFirst({
-    cacheName: SMALL_DB_CACHE,
-    plugins: [
-      new CacheableResponsePlugin({ statuses: [200] }),
-      new ExpirationPlugin({ maxAgeSeconds: 30 * 24 * 60 * 60 }), // 30 days
-    ],
-  })
-);
-
-// ── Tier 3: Large chunked SQLite files ────────────────────
-// sql.js-httpvfs sends Range requests for 8 MB chunks.
+// ── Tier 2: Chunked SQLite files (/db/chunks/**) ──────────
+// sql.js-httpvfs sends Range requests for individual pages.
 // Cache API cannot store 206 responses — we must:
-//   1. Intercept any request to a .chunk file
+//   1. Intercept the range request
 //   2. Strip the Range header and fetch as GET → 200 OK
 //   3. Store the full 200 in cache
 //   4. Use RangeRequestsPlugin to serve the slice back as 206
-const CHUNK_CACHE = 'berean-chunks-v1';
+//
+// This covers ALL databases: lexicon, translations_cc, cross_refs,
+// topical, narrative, morphgnt, commentaries — any URL under /db/chunks/.
+const CHUNK_CACHE = 'berean-chunks-v2';
 
 registerRoute(
-  ({ url }) => url.pathname.startsWith('/db/') && url.pathname.endsWith('.chunk'),
+  ({ url }) => url.pathname.startsWith('/db/chunks/'),
   new CacheFirst({
     cacheName: CHUNK_CACHE,
     plugins: [
@@ -67,7 +52,7 @@ registerRoute(
       new RangeRequestsPlugin(),
       new CacheableResponsePlugin({ statuses: [200] }),
       new ExpirationPlugin({
-        maxEntries: 40,                           // keep at most 40 chunks in cache
+        maxEntries: 60,                           // enough for all DB chunks
         maxAgeSeconds: 7 * 24 * 60 * 60,         // 7 days
         purgeOnQuotaError: true,
       }),
@@ -79,14 +64,11 @@ registerRoute(
   })
 );
 
-// ── Tier 3b: Non-chunked SQLite files ─────────────────────
-// bible_base.sqlite3, morphgnt.sqlite3 etc. if not chunked.
+// ── Tier 3: Full .sqlite3 files (bible_base etc.) ─────────
 registerRoute(
   ({ url }) =>
     url.pathname.startsWith('/db/') &&
-    url.pathname.endsWith('.sqlite3') &&
-    !url.pathname.includes('translations_cc') &&
-    !url.pathname.includes('lexicon'),
+    url.pathname.endsWith('.sqlite3'),
   new CacheFirst({
     cacheName: CHUNK_CACHE,
     plugins: [
@@ -98,6 +80,9 @@ registerRoute(
         purgeOnQuotaError: true,
       }),
     ],
+    fetchOptions: {
+      headers: {},
+    },
   })
 );
 
