@@ -17,13 +17,10 @@ export async function initTopicalDb() {
 
 async function _doInit() {
   try {
-    const configUrl = '/db/chunks/topical/config.json';
-    const probe = await fetch(configUrl, { method: 'HEAD' });
-    if (!probe.ok) { console.info('[topical.js] topical chunks not found'); return false; }
-
+    const { DB_CHUNKS }      = await import('./chunks-manifest.js');
     const { createDbWorker } = await import('sql.js-httpvfs');
     _dbWorker = await createDbWorker(
-      [{ from: 'jsonconfig', configUrl }],
+      [{ from: 'inline', config: DB_CHUNKS.topical }],
       '/sqlite.worker.js', '/sql-wasm.wasm', 1024 * 1024 * 64
     );
 

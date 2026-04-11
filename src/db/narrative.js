@@ -8,6 +8,7 @@
    database is not yet available.
    ============================================================ */
 
+import { DB_CHUNKS } from './chunks-manifest.js';
 import { createDbWorker } from 'sql.js-httpvfs';
 
 // ── Book code mapping ──────────────────────────────────────
@@ -53,15 +54,8 @@ async function _init() {
 
 async function _doInit() {
   try {
-    const configUrl = '/db/chunks/narrative/config.json';
-    const probe = await fetch(configUrl, { method: 'HEAD' });
-    if (!probe.ok) {
-      console.info('[narrative.js] narrative chunks not found — run build-narrative.js first');
-      return false;
-    }
-
     _worker = await createDbWorker(
-      [{ from: 'jsonconfig', configUrl }],
+      [{ from: 'inline', config: DB_CHUNKS.narrative }],
       '/sqlite.worker.js',
       '/sql-wasm.wasm',
       1024 * 1024 * 64  // 64MB max

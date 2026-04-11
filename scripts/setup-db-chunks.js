@@ -4,18 +4,16 @@
  * Wraps each small SQLite database as a single-chunk sql.js-httpvfs config.
  * Run automatically as "prebuild" before `vite build`.
  *
- * Each database gets its content hash baked into the chunk directory, e.g.:
- *   public/db/chunks/<name>/config.json              (no-cache — always fresh)
- *   public/db/chunks/<name>/<hash>/000               (the actual chunk data)
+ * Each database chunk lives at a content-hash-versioned URL:
+ *   public/db/chunks/<name>/<sha256-hash>/000
  *
- * sql.js-httpvfs constructs chunk URLs as:  urlPrefix + zeroPad(index, suffixLength)
- * With urlPrefix = "/db/chunks/<name>/<hash>/" and suffixLength = 3,
- * the only chunk fetched is:  /db/chunks/<name>/<hash>/000
+ * The config is written into src/db/chunks-manifest.js so Vite bundles it
+ * directly into the JS — no runtime fetch of config.json at all.
+ * This avoids CDN caching issues where config.json could be stale.
  *
- * Because the chunk URL includes a content hash, the CDN can cache it forever
- * with `immutable`. When the database changes, the hash changes, config.json
- * (served no-cache) points to the new hash directory, and the old URL is
- * simply never requested again. No cache purging ever needed.
+ * When a database changes → hash changes → manifest changes → Vite produces
+ * a new bundle hash → browser fetches the new bundle → new chunk URL is
+ * fetched fresh (CDN has never seen it). No cache purging ever needed.
  */
 
 import fs     from 'fs';
@@ -23,9 +21,10 @@ import path   from 'path';
 import crypto from 'crypto';
 import { fileURLToPath } from 'url';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const DB_DIR    = path.join(__dirname, '../public/db');
-const CHUNK_DIR = path.join(__dirname, '../public/db/chunks');
+const __dirname  = path.dirname(fileURLToPath(import.meta.url));
+const DB_DIR     = path.join(__dirname, '../public/db');
+const CHUNK_DIR  = path.join(__dirname, '../public/db/chunks');
+const MANIFEST   = path.join(__dirname, '../src/db/chunks-manifest.js');
 
 const DATABASES = [
   { file: 'cross_refs.sqlite3',      name: 'cross_refs'      },
@@ -38,11 +37,12 @@ const DATABASES = [
 
 console.log('\n📦 setup-db-chunks.js — wrapping databases for Cloudflare Pages\n');
 
+const manifest = {};
 let anyMissing = false;
 
 for (const { file, name } of DATABASES) {
-  const srcPath  = path.join(DB_DIR, file);
-  const nameDir  = path.join(CHUNK_DIR, name);
+  const srcPath = path.join(DB_DIR, file);
+  const nameDir = path.join(CHUNK_DIR, name);
 
   if (!fs.existsSync(srcPath)) {
     console.warn(`   ⚠️  ${file} not found — skipping`);
@@ -54,50 +54,44 @@ for (const { file, name } of DATABASES) {
   const totalBytes = data.length;
 
   // Short content hash (first 12 hex chars of SHA-256)
-  const hash       = crypto.createHash('sha256').update(data).digest('hex').slice(0, 12);
-  const configPath = path.join(nameDir, 'config.json');
+  const hash    = crypto.createHash('sha256').update(data).digest('hex').slice(0, 12);
+  const hashDir = path.join(nameDir, hash);
+  const chunk   = path.join(hashDir, '000');
 
-  // Skip if config already points to this exact hash
-  if (fs.existsSync(configPath)) {
-    const existing    = JSON.parse(fs.readFileSync(configPath, 'utf8'));
-    const currentHash = existing.urlPrefix?.split('/').filter(Boolean).at(-1);
-    if (currentHash === hash && fs.existsSync(path.join(nameDir, hash, '000'))) {
-      console.log(`   ✅ ${name} — unchanged (${(totalBytes / 1024 / 1024).toFixed(2)} MB, hash: ${hash})`);
-      continue;
-    }
-  }
-
-  // Remove old hash subdirectories (orphaned — CDN cached but never requested again)
-  if (fs.existsSync(nameDir)) {
-    for (const entry of fs.readdirSync(nameDir)) {
-      if (entry !== 'config.json') {
+  if (fs.existsSync(chunk)) {
+    console.log(`   ✅ ${name} — unchanged (${(totalBytes / 1024 / 1024).toFixed(2)} MB, hash: ${hash})`);
+  } else {
+    // Remove old hash subdirectories (orphaned)
+    if (fs.existsSync(nameDir)) {
+      for (const entry of fs.readdirSync(nameDir)) {
         fs.rmSync(path.join(nameDir, entry), { recursive: true });
       }
     }
+    fs.mkdirSync(hashDir, { recursive: true });
+    fs.writeFileSync(chunk, data);
+    console.log(`   ✅ ${name} — ${(totalBytes / 1024 / 1024).toFixed(2)} MB → chunks/${name}/${hash}/000`);
   }
 
-  // Create hash-versioned subdirectory and write chunk "000"
-  const hashDir = path.join(nameDir, hash);
-  fs.mkdirSync(hashDir, { recursive: true });
-  fs.writeFileSync(path.join(hashDir, '000'), data);
-
-  // Write config.json pointing at the hash-versioned urlPrefix
-  const config = {
+  manifest[name] = {
     serverMode:          'chunked',
     urlPrefix:           `/db/chunks/${name}/${hash}/`,
-    serverChunkSize:     totalBytes,   // one chunk = entire file
+    serverChunkSize:     totalBytes,
     requestChunkSize:    4096,
     databaseLengthBytes: totalBytes,
-    suffixLength:        3,            // appends "000" → full URL = urlPrefix + "000"
+    suffixLength:        3,
   };
-  fs.mkdirSync(nameDir, { recursive: true });
-  fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
-
-  console.log(`   ✅ ${name} — ${(totalBytes / 1024 / 1024).toFixed(2)} MB → chunks/${name}/${hash}/000`);
 }
+
+// Write JS manifest so Vite bundles the config directly — no runtime fetch needed
+const manifestJs = `// AUTO-GENERATED by scripts/setup-db-chunks.js — do not edit manually
+// Rebuilt on every \`npm run build\`. Commit this file.
+export const DB_CHUNKS = ${JSON.stringify(manifest, null, 2)};
+`;
+fs.writeFileSync(MANIFEST, manifestJs);
+console.log(`\n   📄 Wrote src/db/chunks-manifest.js`);
 
 if (anyMissing) {
   console.log('\n   Some databases were missing. Run the build scripts to generate them.');
 }
 
-console.log('\n✅ Done — commit public/db/chunks/ to git.\n');
+console.log('\n✅ Done — commit public/db/chunks/ and src/db/chunks-manifest.js to git.\n');
