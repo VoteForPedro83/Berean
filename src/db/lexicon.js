@@ -25,7 +25,7 @@ async function _doInit() {
     const { createDbWorker } = await import('sql.js-httpvfs');
 
     _dbWorker = await createDbWorker(
-      [{ from: 'inline', ...DB_CHUNKS.lexicon }],
+      [{ from: 'inline', config: DB_CHUNKS.lexicon }],
       '/sqlite.worker.js',
       '/sql-wasm.wasm',
       1024 * 1024 * 16  // 16 MB max — lexicon is ~6 MB

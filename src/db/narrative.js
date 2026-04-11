@@ -55,7 +55,7 @@ async function _init() {
 async function _doInit() {
   try {
     _worker = await createDbWorker(
-      [{ from: 'inline', ...DB_CHUNKS.narrative }],
+      [{ from: 'inline', config: DB_CHUNKS.narrative }],
       '/sqlite.worker.js',
       '/sql-wasm.wasm',
       1024 * 1024 * 64  // 64MB max

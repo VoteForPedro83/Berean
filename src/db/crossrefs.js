@@ -20,7 +20,7 @@ async function _doInit() {
     const { DB_CHUNKS }      = await import('./chunks-manifest.js');
     const { createDbWorker } = await import('sql.js-httpvfs');
     _dbWorker = await createDbWorker(
-      [{ from: 'inline', ...DB_CHUNKS.cross_refs }],
+      [{ from: 'inline', config: DB_CHUNKS.cross_refs }],
       '/sqlite.worker.js', '/sql-wasm.wasm', 1024 * 1024 * 64
     );
 

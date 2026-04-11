@@ -22,7 +22,7 @@ async function _doInit() {
     const { DB_CHUNKS }      = await import('./chunks-manifest.js');
     const { createDbWorker } = await import('sql.js-httpvfs');
     _dbWorker = await createDbWorker(
-      [{ from: 'inline', ...DB_CHUNKS.translations_cc }],
+      [{ from: 'inline', config: DB_CHUNKS.translations_cc }],
       '/sqlite.worker.js', '/sql-wasm.wasm',
       1024 * 1024 * 64   // 64 MB max (translations_cc is ~9 MB)
     );

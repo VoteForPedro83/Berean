@@ -1,8 +1,0 @@
-{
-  "serverMode": "chunked",
-  "urlPrefix": "/db/chunks/lexicon/c1abb430ecb5/",
-  "serverChunkSize": 7139328,
-  "requestChunkSize": 4096,
-  "databaseLengthBytes": 7139328,
-  "suffixLength": 3
-}

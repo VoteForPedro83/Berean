@@ -11,10 +11,10 @@ export const DB_CHUNKS = {
   },
   "lexicon": {
     "serverMode": "chunked",
-    "urlPrefix": "/db/chunks/lexicon/c1abb430ecb5/",
-    "serverChunkSize": 7139328,
+    "urlPrefix": "/db/chunks/lexicon/4dc7e5c32735/",
+    "serverChunkSize": 7233536,
     "requestChunkSize": 4096,
-    "databaseLengthBytes": 7139328,
+    "databaseLengthBytes": 7233536,
     "suffixLength": 3
   },
   "morphgnt": {
@@ -43,10 +43,10 @@ export const DB_CHUNKS = {
   },
   "translations_cc": {
     "serverMode": "chunked",
-    "urlPrefix": "/db/chunks/translations_cc/9c67c48ea4db/",
-    "serverChunkSize": 9498624,
+    "urlPrefix": "/db/chunks/translations_cc/4ad31afbf53c/",
+    "serverChunkSize": 9752576,
     "requestChunkSize": 4096,
-    "databaseLengthBytes": 9498624,
+    "databaseLengthBytes": 9752576,
     "suffixLength": 3
   }
 };
