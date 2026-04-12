@@ -45,6 +45,17 @@ const DATABASES = [
 
 console.log('\n📦 setup-db-chunks.js — wrapping databases for Cloudflare Pages\n');
 
+// Load existing manifest so we can preserve entries for missing source files
+// (e.g. commentaries.sqlite3 is gitignored but its chunks are committed)
+let existingManifest = {};
+if (fs.existsSync(MANIFEST)) {
+  try {
+    const src = fs.readFileSync(MANIFEST, 'utf8');
+    const m = src.match(/export const DB_CHUNKS = (\{[\s\S]*\});/);
+    if (m) existingManifest = JSON.parse(m[1]);
+  } catch { /* ignore parse errors */ }
+}
+
 const manifest = {};
 let anyMissing = false;
 
@@ -53,7 +64,12 @@ for (const { file, name } of DATABASES) {
   const nameDir = path.join(CHUNK_DIR, name);
 
   if (!fs.existsSync(srcPath)) {
-    console.warn(`   ⚠️  ${file} not found — skipping`);
+    if (existingManifest[name]) {
+      manifest[name] = existingManifest[name];
+      console.log(`   ♻️  ${name} — source missing, preserved existing manifest entry (hash: ${existingManifest[name].urlPrefix.split('/')[4]})`);
+    } else {
+      console.warn(`   ⚠️  ${file} not found and no existing entry — skipping`);
+    }
     anyMissing = true;
     continue;
   }
