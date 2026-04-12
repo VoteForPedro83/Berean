@@ -115,11 +115,18 @@ for (const { file, name } of DATABASES) {
     console.log(`   ✅ ${name} — ${(totalBytes / 1024 / 1024).toFixed(2)} MB → ${numChunks} chunk${numChunks > 1 ? 's' : ''} at chunks/${name}/${hash}/`);
   }
 
+  // For multi-chunk DBs, set requestChunkSize = serverChunkSize so that every
+  // Range request targets bytes 0–N within a single server chunk file.
+  // Cloudflare Pages returns HTTP 200 (full file) instead of 206 on uncached
+  // range requests; when the range always starts at byte 0 the full-file
+  // response is identical to the requested range, so sql.js-httpvfs gets
+  // correct data without needing a service-worker range-fixer.
+  const isMultiChunk = totalBytes > chunkSize;
   manifest[name] = {
     serverMode:          'chunked',
     urlPrefix:           `/db/chunks/${name}/${hash}/`,
     serverChunkSize:     chunkSize,
-    requestChunkSize:    4096,
+    requestChunkSize:    isMultiChunk ? chunkSize : 4096,
     databaseLengthBytes: totalBytes,
     suffixLength:        3,
   };
