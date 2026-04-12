@@ -5,7 +5,7 @@ export const DB_CHUNKS = {
     "serverMode": "chunked",
     "urlPrefix": "/db/chunks/commentaries/b6432a28e3e2/",
     "serverChunkSize": 25165824,
-    "requestChunkSize": 25165824,
+    "requestChunkSize": 4096,
     "databaseLengthBytes": 313946112,
     "suffixLength": 3
   },
