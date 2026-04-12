@@ -1140,6 +1140,33 @@ function injectComponentCSS() {
     .settings-btn { padding:.4rem .875rem; border-radius:var(--radius-ui); font-size:.875rem; cursor:pointer; font-family:var(--font-ui); border:1px solid var(--color-border-subtle); background:var(--color-surface-raised); color:var(--color-ink-secondary); }
     .settings-btn--primary { background:var(--color-accent-gold); border-color:var(--color-accent-gold); color:#0a0a0a; font-weight:600; }
     .settings-btn--primary:hover { opacity:.9; }
+    /* ── Commentary settings ── */
+    .settings-comm__toolbar { display:flex; align-items:center; justify-content:space-between; gap:.5rem; flex-wrap:wrap; }
+    .settings-comm__hint { font-size:.8125rem; color:var(--color-ink-secondary); margin:0; }
+    .settings-comm__toolbar-btns { display:flex; gap:.375rem; flex-shrink:0; }
+    .settings-comm__grid {
+      display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+      gap:.375rem .75rem;
+    }
+    .settings-comm__item {
+      display:flex; align-items:center; gap:.45rem; cursor:pointer;
+      font-size:.8125rem; color:var(--color-ink-secondary);
+      padding:.25rem .375rem; border-radius:var(--radius-ui);
+    }
+    .settings-comm__item:hover { background:var(--color-surface-raised); color:var(--color-ink-primary); }
+    .settings-comm__check { accent-color:var(--color-accent-gold); cursor:pointer; flex-shrink:0; width:.9rem; height:.9rem; }
+    .settings-comm__upload-block {
+      display:flex; flex-direction:column; gap:.5rem;
+      background:var(--color-surface-raised); border-radius:var(--radius-ui); padding:.625rem .75rem;
+    }
+    .settings-comm__upload-title { font-size:.8125rem; font-weight:600; color:var(--color-ink-primary); }
+    .settings-comm__upload-row { display:flex; align-items:center; gap:.625rem; flex-wrap:wrap; }
+    .settings-comm__upload-file { font-size:.8125rem; color:var(--color-accent-sage); font-family:var(--font-mono); }
+    .settings-comm__upload-date { font-size:.75rem; color:var(--color-ink-muted); margin-left:auto; }
+    .settings-comm__upload-hint { font-size:.75rem; color:var(--color-ink-muted); }
+    .settings-comm__upload-hint code { font-family:var(--font-mono); font-size:.7rem; }
+    .settings-comm__upload-schema { font-size:.7rem; color:var(--color-ink-muted); margin:0; line-height:1.5; }
+    .settings-comm__upload-schema code { font-family:var(--font-mono); font-size:.68rem; }
     .settings-about { margin:0; font-size:.8125rem; color:var(--color-ink-secondary); }
     .settings-about--muted { color:var(--color-ink-muted); }
   `;

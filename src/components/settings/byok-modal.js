@@ -2,6 +2,10 @@
    byok-modal.js — Settings modal: API keys + theme + language
    ============================================================ */
 import { bus, EVENTS } from '../../state/eventbus.js';
+import {
+  getCommentaryPrefs, saveCommentaryPrefs,
+  getUserCommentaryMeta, loadUserCommentaryDb, deleteUserCommentaryDb,
+} from '../../db/commentaries.js';
 import { saveApiKey, deleteApiKey, hasApiKey, listStoredProviders } from '../../idb/byok.js';
 import { toast } from '../layout/toast.js';
 import { toggleTheme, setLang, setFontSize, state } from '../../state/study-mode.js';
@@ -53,6 +57,34 @@ const PROVIDERS = [
     keySteps: 'Go to OpenAI Platform → sign up → add a credit card → API Keys → Create new secret key. Requires a Cloudflare Worker proxy to be deployed.',
   },
 ];
+
+// Known built-in commentary sources — shown as checkboxes in Settings
+const COMM_SOURCES = [
+  { abbr: 'CALVIN',   name: "Calvin's Commentaries" },
+  { abbr: 'GENEVA',   name: 'Geneva Bible Notes' },
+  { abbr: 'MHC',      name: 'Matthew Henry Complete' },
+  { abbr: 'MHCC',     name: 'Matthew Henry Concise' },
+  { abbr: 'JFB',      name: 'Jamieson, Fausset & Brown' },
+  { abbr: 'BARNES',   name: "Barnes' Notes" },
+  { abbr: 'TRAPP',    name: "Trapp's Commentary" },
+  { abbr: 'POOLE',    name: "Poole's Commentary" },
+  { abbr: 'ALFORD',   name: "Alford's Greek Testament" },
+  { abbr: 'RYLE',     name: "Ryle's Expository Thoughts" },
+  { abbr: 'SPURG',    name: "Spurgeon's Commentary" },
+  { abbr: 'LUTHER',   name: "Luther's Commentary" },
+  { abbr: 'EDWARDS',  name: 'Jonathan Edwards' },
+  { abbr: 'PINK',     name: "A.W. Pink's Commentary" },
+  { abbr: 'OWEN',     name: "John Owen's Commentary" },
+  { abbr: 'CAMB',     name: 'Cambridge Bible Commentary' },
+  { abbr: 'MACL',     name: "MacLaren's Expositions" },
+  { abbr: 'MACK',     name: "MacKnight's Epistles" },
+  { abbr: 'CLARKE',   name: "Adam Clarke's Commentary" },
+  { abbr: 'TSK',      name: 'Treasury of Scripture Knowledge' },
+];
+
+function _esc(s) {
+  return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
 
 let dialog = null;
 
@@ -245,6 +277,9 @@ function buildModalHTML(storedProviders, ghToken, googleClientId) {
           </div>
         </section>
 
+        <!-- Commentaries -->
+        ${_buildCommentariesSection()}
+
         <!-- About -->
         <section class="settings-section settings-section--about">
           <p class="settings-about">Berean — free, open-source, non-commercial Bible study platform for pastors.</p>
@@ -253,6 +288,54 @@ function buildModalHTML(storedProviders, ghToken, googleClientId) {
 
       </div>
     </div>`;
+}
+
+function _buildCommentariesSection() {
+  const enabled = getCommentaryPrefs(); // null = all; string[] = filter
+  const meta    = getUserCommentaryMeta();
+
+  const checksHtml = COMM_SOURCES.map(s => {
+    const checked = enabled === null || enabled.includes(s.abbr);
+    return `<label class="settings-comm__item">
+      <input type="checkbox" class="settings-comm__check" data-abbr="${s.abbr}"${checked ? ' checked' : ''}>
+      <span class="settings-comm__label">${_esc(s.name)}</span>
+    </label>`;
+  }).join('');
+
+  const uploadHtml = meta
+    ? `<div class="settings-comm__upload-row">
+         <span class="settings-comm__upload-file">✓ ${_esc(meta.label || meta.filename)}</span>
+         <span class="settings-comm__upload-date">Uploaded ${new Date(meta.uploadedAt).toLocaleDateString()}</span>
+         <button class="settings-btn settings-btn--sm settings-btn--danger" id="comm-delete-upload">Remove</button>
+       </div>`
+    : `<div class="settings-comm__upload-row">
+         <label class="settings-btn settings-btn--sm settings-label-btn" for="comm-upload-file">Upload .sqlite3</label>
+         <input type="file" id="comm-upload-file" accept=".sqlite3,.db" style="display:none"/>
+         <span class="settings-comm__upload-hint">Must have a <code>commentaries</code> table</span>
+       </div>`;
+
+  return `<section class="settings-section">
+    <h3 class="settings-section__title">Commentaries</h3>
+    <div class="settings-comm__toolbar">
+      <span class="settings-comm__hint">Choose which sources appear in the Commentary panel.</span>
+      <div class="settings-comm__toolbar-btns">
+        <button class="settings-btn settings-btn--sm" id="comm-select-all">All</button>
+        <button class="settings-btn settings-btn--sm" id="comm-select-none">None</button>
+      </div>
+    </div>
+    <div class="settings-comm__grid">${checksHtml}</div>
+    <div class="settings-comm__upload-block">
+      <span class="settings-comm__upload-title">Your commentary database</span>
+      ${uploadHtml}
+      <p class="settings-comm__upload-schema">
+        Schema: <code>commentaries(book_id, chapter, verse_start, verse_end, source_abbr, html_content)</code>
+      </p>
+    </div>
+  </section>`;
+}
+
+function _refreshCommentaryPanel() {
+  if (state.book) bus.emit(EVENTS.CHAPTER_LOADED, { book: state.book, chapter: state.chapter });
 }
 
 function wireSettingsEvents() {
@@ -410,5 +493,57 @@ function wireSettingsEvents() {
       toast('Data restored from backup', 'info');
     } catch (err) { toast(err.message, 'error'); }
     e.target.value = '';
+  });
+
+  // ── Commentary source prefs ───────────────────────────────
+  function _getCheckedAbbrs() {
+    return [...dialog.querySelectorAll('.settings-comm__check')]
+      .filter(cb => cb.checked)
+      .map(cb => cb.dataset.abbr);
+  }
+
+  dialog.querySelectorAll('.settings-comm__check').forEach(cb => {
+    cb.addEventListener('change', () => {
+      const checked = _getCheckedAbbrs();
+      // null = all enabled (store null so adding new sources works automatically)
+      saveCommentaryPrefs(checked.length === COMM_SOURCES.length ? null : checked);
+      _refreshCommentaryPanel();
+    });
+  });
+
+  document.getElementById('comm-select-all')?.addEventListener('click', () => {
+    dialog.querySelectorAll('.settings-comm__check').forEach(cb => { cb.checked = true; });
+    saveCommentaryPrefs(null);
+    _refreshCommentaryPanel();
+  });
+
+  document.getElementById('comm-select-none')?.addEventListener('click', () => {
+    dialog.querySelectorAll('.settings-comm__check').forEach(cb => { cb.checked = false; });
+    saveCommentaryPrefs([]);
+    _refreshCommentaryPanel();
+  });
+
+  // ── User commentary upload ────────────────────────────────
+  document.getElementById('comm-upload-file')?.addEventListener('change', async e => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    e.target.value = '';
+    try {
+      toast('Loading commentary database…', 'info');
+      await loadUserCommentaryDb(file);
+      toast(`"${file.name}" loaded — commentaries refreshed`, 'info');
+      _refreshCommentaryPanel();
+      openSettings(); // Re-render modal to show file name
+    } catch (err) {
+      toast(`Upload failed: ${err.message}`, 'error');
+    }
+  });
+
+  document.getElementById('comm-delete-upload')?.addEventListener('click', async () => {
+    if (!confirm('Remove your uploaded commentary database?')) return;
+    await deleteUserCommentaryDb();
+    toast('Custom commentary removed', 'info');
+    _refreshCommentaryPanel();
+    openSettings();
   });
 }
