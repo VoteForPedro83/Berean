@@ -30,10 +30,13 @@ async function _doInit() {
       '/sqlite.worker.js', '/sql-wasm.wasm', 1024 * 1024 * 128
     );
 
-    const check = await _dbWorker.db.query(`SELECT COUNT(*) as n FROM commentaries`);
-    const count = check[0]?.n ?? 0;
-    _dbReady = true;
-    console.info(`[commentaries.js] ✅ Loaded — ${count.toLocaleString()} entries`);
+    // Use a cheap 1-row probe — COUNT(*) triggers a full index scan across all
+    // 13 chunk files (313 MB total), making the first load extremely slow.
+    const check = await _dbWorker.db.query(
+      `SELECT book_id FROM commentaries LIMIT 1`
+    );
+    _dbReady = check.length > 0;
+    console.info(`[commentaries.js] ✅ Loaded (probe ok: ${_dbReady})`);
     return true;
   } catch (err) {
     console.warn('[commentaries.js] Init failed:', err.message);

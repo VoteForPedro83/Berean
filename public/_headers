@@ -8,11 +8,7 @@
   Accept-Ranges: bytes
   Content-Type: application/octet-stream
 
-/db/chunks/*/config.json
-  Cache-Control: no-cache
-  Content-Type: application/json
-
-/db/chunks/*/*/*
+/db/chunks/*
   Cache-Control: public, max-age=31536000, immutable
   Accept-Ranges: bytes
   Content-Type: application/octet-stream
