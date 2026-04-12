@@ -43,6 +43,14 @@ const DATABASES = [
   { file: 'translations_cc.sqlite3', name: 'translations_cc' },
 ];
 
+// In CI (Cloudflare Pages sets CI=true), the source .sqlite3 files are gitignored
+// and not available. The committed chunks-manifest.js and public/db/chunks/ are
+// already correct — skip regeneration entirely to avoid overwriting the manifest.
+if (process.env.CI) {
+  console.log('\n📦 setup-db-chunks.js — CI detected, using committed chunks-manifest.js\n');
+  process.exit(0);
+}
+
 console.log('\n📦 setup-db-chunks.js — wrapping databases for Cloudflare Pages\n');
 
 // Load existing manifest so we can preserve entries for missing source files
