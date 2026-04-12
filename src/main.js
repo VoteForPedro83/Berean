@@ -1256,6 +1256,9 @@ function injectComponentCSS() {
     .comm-empty { padding:2rem 1.5rem; }
     .comm-empty__title { font-size:.9375rem; color:var(--color-ink-secondary); margin:0 0 .375rem; }
     .comm-empty__body  { font-size:.8125rem; color:var(--color-ink-muted); margin:0; }
+    .comm-empty__err   { font-family:var(--font-mono); font-size:.75rem; word-break:break-all; background:var(--color-surface-raised); padding:.15rem .35rem; border-radius:3px; }
+    .comm-retry-btn    { padding:.3rem .8rem; font-size:.8125rem; background:none; border:1px solid var(--color-border-subtle); border-radius:.375rem; color:var(--color-ink-secondary); cursor:pointer; transition:background-color 120ms; }
+    .comm-retry-btn:hover { background:var(--color-surface-raised); }
     .comm-source { border-bottom:1px solid var(--color-border-subtle); }
     .comm-source__header {
       display:flex; align-items:center; justify-content:space-between;

@@ -2,17 +2,29 @@
    commentaries.js — Commentary query layer
    ============================================================ */
 
-let _dbWorker = null;
-let _dbReady  = false;
-let _initProm = null;
+let _dbWorker  = null;
+let _dbReady   = false;
+let _initProm  = null;
+let _lastError = null;   // exposed so the UI can show a helpful message
 
 export function isCommentaryReady() { return _dbReady; }
+export function getCommentaryError() { return _lastError; }
 
 export async function initCommentaryDb() {
   if (_dbReady)  return true;
   if (_initProm) return _initProm;
+  _lastError = null;
   _initProm = _doInit();
   return _initProm;
+}
+
+/** Reset so the DB can be retried after a failure. */
+export function resetCommentaryDb() {
+  if (_dbReady) return;   // already working, don't reset
+  _dbWorker = null;
+  _dbReady  = false;
+  _initProm = null;
+  _lastError = null;
 }
 
 async function _doInit() {
@@ -39,7 +51,8 @@ async function _doInit() {
     console.info(`[commentaries.js] ✅ Loaded (probe ok: ${_dbReady})`);
     return true;
   } catch (err) {
-    console.warn('[commentaries.js] Init failed:', err.message);
+    _lastError = err.message || String(err);
+    console.error('[commentaries.js] Init failed:', err);
     return false;
   }
 }

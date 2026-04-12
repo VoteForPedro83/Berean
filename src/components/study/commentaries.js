@@ -5,7 +5,7 @@
    ============================================================ */
 
 import { bus, EVENTS }         from '../../state/eventbus.js';
-import { getCommentaries, isCommentaryReady } from '../../db/commentaries.js';
+import { getCommentaries, isCommentaryReady, getCommentaryError, resetCommentaryDb } from '../../db/commentaries.js';
 import { streamAiResponse }    from '../../ai/stream.js';
 import { commentarySummaryPrompt } from '../../ai/prompts.js';
 import { TRANSLATION_LICENCES }    from '../../ai/context.js';
@@ -224,12 +224,22 @@ function _render(state) {
 
   if (state.empty) {
     const isDbFailed = state.empty === 'db-failed';
+    const errMsg = isDbFailed ? (getCommentaryError() || 'Unknown error') : null;
     _container.innerHTML = `<div class="comm-empty">
-      <p class="comm-empty__title">${isDbFailed ? 'Commentary unavailable' : 'No commentary for this chapter'}</p>
-      <p class="comm-empty__body">${isDbFailed
-        ? 'The commentary database could not be loaded. Check your connection and try refreshing.'
-        : 'No commentary entries were found for this passage.'}</p>
+      <p class="comm-empty__title">${isDbFailed ? 'Commentary failed to load' : 'No commentary for this chapter'}</p>
+      ${isDbFailed ? `
+        <p class="comm-empty__body">Error: <code class="comm-empty__err">${_esc(errMsg)}</code></p>
+        <p class="comm-empty__body" style="margin-top:.5rem">
+          <button class="comm-retry-btn" id="comm-retry">↺ Retry</button>
+        </p>` : `
+        <p class="comm-empty__body">No commentary entries found for this passage.</p>`}
     </div>`;
+    if (isDbFailed) {
+      document.getElementById('comm-retry')?.addEventListener('click', () => {
+        resetCommentaryDb();
+        if (_current) _loadChapter(_current.book, _current.chapter);
+      });
+    }
     return;
   }
 
