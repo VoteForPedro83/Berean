@@ -5,7 +5,7 @@
    ============================================================ */
 
 import { bus, EVENTS }         from '../../state/eventbus.js';
-import { getCommentaries }     from '../../db/commentaries.js';
+import { getCommentaries, isCommentaryReady } from '../../db/commentaries.js';
 import { streamAiResponse }    from '../../ai/stream.js';
 import { commentarySummaryPrompt } from '../../ai/prompts.js';
 import { TRANSLATION_LICENCES }    from '../../ai/context.js';
@@ -68,12 +68,15 @@ export function initCommentaries(containerEl) {
 // ── Load & render ─────────────────────────────────────────────
 
 async function _loadChapter(book, chapter) {
-  _render({ loading: true });
+  // Show progress bar only when the DB is still initialising (slow first load).
+  // If the DB is already ready, the query is fast — use the brief skeleton instead.
+  const dbAlreadyReady = isCommentaryReady();
+  _render({ loading: true, showProgress: !dbAlreadyReady });
 
   const rows = await getCommentaries(book, chapter);
 
   if (!rows.length) {
-    _render({ empty: true });
+    _render({ empty: !isCommentaryReady() ? 'db-failed' : 'no-data' });
     return;
   }
 
@@ -181,17 +184,51 @@ function _render(state) {
   if (!_container) return;
 
   if (state.loading) {
-    _container.innerHTML = `<div class="comm-loading">
-      <div class="comm-skeleton"><div class="comm-sk-line wide"></div><div class="comm-sk-line narrow"></div><div class="comm-sk-line wide"></div></div>
-      <div class="comm-skeleton"><div class="comm-sk-line wide"></div><div class="comm-sk-line narrow"></div></div>
-    </div>`;
+    if (state.showProgress) {
+      // DB is still initialising — show an animated progress bar.
+      // Uses an ease-out simulation: fast start, decelerates near 90%, jumps to
+      // 100% when content renders (this element is replaced at that point).
+      _container.innerHTML = `<div class="comm-loading comm-loading--progress">
+        <div class="comm-progress-header">
+          <span class="comm-progress-label">Loading commentary database…</span>
+          <span class="comm-progress-pct" id="comm-pct">0%</span>
+        </div>
+        <div class="comm-progress-track">
+          <div class="comm-progress-fill" id="comm-fill"></div>
+        </div>
+        <p class="comm-progress-note">
+          First load downloads a large database (~325 MB). Subsequent loads are instant.
+        </p>
+      </div>`;
+
+      let pct = 0;
+      const fill = document.getElementById('comm-fill');
+      const pctEl = document.getElementById('comm-pct');
+      const timer = setInterval(() => {
+        if (!fill || !fill.isConnected) { clearInterval(timer); return; }
+        // Approach 90% asymptotically: each tick closes 4% of remaining gap
+        pct += (90 - pct) * 0.04;
+        const p = Math.round(pct);
+        fill.style.width = p + '%';
+        pctEl.textContent = p + '%';
+      }, 400);
+    } else {
+      // DB ready, just waiting on query — show brief skeleton
+      _container.innerHTML = `<div class="comm-loading">
+        <div class="comm-skeleton"><div class="comm-sk-line wide"></div><div class="comm-sk-line narrow"></div><div class="comm-sk-line wide"></div></div>
+        <div class="comm-skeleton"><div class="comm-sk-line wide"></div><div class="comm-sk-line narrow"></div></div>
+      </div>`;
+    }
     return;
   }
 
   if (state.empty) {
+    const isDbFailed = state.empty === 'db-failed';
     _container.innerHTML = `<div class="comm-empty">
-      <p class="comm-empty__title">No commentary data</p>
-      <p class="comm-empty__body">Commentary database is empty. Run <code>node scripts/build-commentaries.js</code> to populate it.</p>
+      <p class="comm-empty__title">${isDbFailed ? 'Commentary unavailable' : 'No commentary for this chapter'}</p>
+      <p class="comm-empty__body">${isDbFailed
+        ? 'The commentary database could not be loaded. Check your connection and try refreshing.'
+        : 'No commentary entries were found for this passage.'}</p>
     </div>`;
     return;
   }
