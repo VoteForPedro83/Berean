@@ -143,8 +143,6 @@ function _updateSelectionVisuals() {
 // ── Selection bar ─────────────────────────────────────────────
 
 function _showSelectionBar(book, chapter) {
-  _hideSelectionBar();
-
   const count = _selectedOsisIds.length;
   if (count === 0) return;
 
@@ -154,11 +152,7 @@ function _showSelectionBar(book, chapter) {
     ? `Verse ${vStart}`
     : `Verses ${vStart}–${vEnd}`;
 
-  _selectionBarEl = document.createElement('div');
-  _selectionBarEl.className = 'selection-bar';
-  _selectionBarEl.setAttribute('role', 'toolbar');
-  _selectionBarEl.setAttribute('aria-label', 'Verse selection actions');
-  _selectionBarEl.innerHTML = `
+  const innerHtml = `
     <span class="selection-bar__label">${count === 1 ? '1 verse' : count + ' verses'} · ${_esc(rangeLabel)}</span>
     <div class="selection-bar__actions">
       <button class="selection-bar__btn" data-sel-action="ask-ai"      title="Send to AI panel">Ask AI</button>
@@ -167,6 +161,18 @@ function _showSelectionBar(book, chapter) {
       <button class="selection-bar__btn" data-sel-action="clippings"   title="Send to clippings">Clippings</button>
       <button class="selection-bar__btn selection-bar__btn--clear" data-sel-action="clear" title="Clear selection" aria-label="Clear selection">✕</button>
     </div>`;
+
+  // If bar already exists, update its content in-place (no flash)
+  if (_selectionBarEl) {
+    _selectionBarEl.innerHTML = innerHtml;
+    return;
+  }
+
+  _selectionBarEl = document.createElement('div');
+  _selectionBarEl.className = 'selection-bar';
+  _selectionBarEl.setAttribute('role', 'toolbar');
+  _selectionBarEl.setAttribute('aria-label', 'Verse selection actions');
+  _selectionBarEl.innerHTML = innerHtml;
 
   // Insert at top of reading scroll area so it doesn't overlap verse text
   const scrollEl = document.getElementById('reading-scroll');

@@ -652,6 +652,7 @@ function injectComponentCSS() {
     .sidebar__item:hover { background:var(--color-surface-raised); color:var(--color-ink-primary); }
     .sidebar__item--active { color:var(--color-accent-gold); background:color-mix(in srgb,var(--color-accent-gold) 10%,transparent); }
     .sidebar__item:focus-visible { outline:2px solid var(--color-accent-gold); outline-offset:2px; }
+    .sidebar__item-label { display:none; }
 
     .main-content { flex:1; display:flex; overflow:hidden; }
     .reading-pane-container { flex:1; overflow:hidden; display:flex; flex-direction:column; }
