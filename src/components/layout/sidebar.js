@@ -1,5 +1,5 @@
 /* ============================================================
-   sidebar.js — Left icon sidebar
+   sidebar.js — Left icon sidebar (desktop) / drawer (mobile)
    ============================================================ */
 import { bus, EVENTS } from '../../state/eventbus.js';
 
@@ -31,21 +31,28 @@ export function initSidebar() {
       ${NAV_ITEMS.map(d => `
         <button class="sidebar__item${d.id === _active ? ' sidebar__item--active' : ''}"
                 data-dest="${d.id}" aria-label="${d.label}" title="${d.label}">
-          ${d.icon}
+          <span class="sidebar__item-icon">${d.icon}</span>
+          <span class="sidebar__item-label">${d.label}</span>
         </button>`).join('')}
     </nav>
     <div class="sidebar__bottom">
       <button class="sidebar__item" data-dest="shortcuts" aria-label="Keyboard shortcuts" title="Keyboard shortcuts (?)">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
-          <rect x="2" y="6" width="20" height="13" rx="2"/>
-          <path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M8 14h8"/>
-        </svg>
+        <span class="sidebar__item-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+            <rect x="2" y="6" width="20" height="13" rx="2"/>
+            <path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M8 14h8"/>
+          </svg>
+        </span>
+        <span class="sidebar__item-label">Shortcuts</span>
       </button>
       <button class="sidebar__item" data-dest="settings" aria-label="Settings" title="Settings">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
-          <circle cx="12" cy="12" r="3"/>
-          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-        </svg>
+        <span class="sidebar__item-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+        </span>
+        <span class="sidebar__item-label">Settings</span>
       </button>
     </div>`;
 
@@ -53,6 +60,10 @@ export function initSidebar() {
     const btn = e.target.closest('[data-dest]');
     if (!btn) return;
     const dest = btn.dataset.dest;
+
+    // Close drawer on mobile when a nav item is tapped
+    _closeDrawer();
+
     if (dest === 'settings')  { bus.emit(EVENTS.MODAL_OPEN, 'settings');   return; }
     if (dest === 'shortcuts') { bus.emit('shortcuts:open');                return; }
 
@@ -70,7 +81,13 @@ export function initSidebar() {
     bus.emit('view:change', { dest, prev });
   });
 
-  bus.on(EVENTS.SIDEBAR_TOGGLE, () => el.classList.toggle('sidebar--collapsed'));
+  bus.on(EVENTS.SIDEBAR_TOGGLE, () => {
+    if (window.matchMedia('(max-width: 768px)').matches) {
+      _toggleDrawer();
+    } else {
+      el.classList.toggle('sidebar--collapsed');
+    }
+  });
 
   // When search closes via result click, reset active item to 'study'
   bus.on('search:close', () => {
@@ -78,4 +95,22 @@ export function initSidebar() {
     el.querySelectorAll('.sidebar__item').forEach(b =>
       b.classList.toggle('sidebar__item--active', b.dataset.dest === 'study'));
   });
+}
+
+function _toggleDrawer() {
+  const el      = document.getElementById('sidebar');
+  const backdrop = document.getElementById('sidebar-backdrop');
+  const isOpen  = el?.classList.contains('sidebar--drawer-open');
+  if (isOpen) {
+    _closeDrawer();
+  } else {
+    el?.classList.add('sidebar--drawer-open');
+    backdrop?.classList.add('sidebar-backdrop--visible');
+  }
+}
+
+function _closeDrawer() {
+  if (!window.matchMedia('(max-width: 768px)').matches) return;
+  document.getElementById('sidebar')?.classList.remove('sidebar--drawer-open');
+  document.getElementById('sidebar-backdrop')?.classList.remove('sidebar-backdrop--visible');
 }

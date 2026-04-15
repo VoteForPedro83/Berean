@@ -261,6 +261,7 @@ function wireStrongsPopups() {
       allowHTML: true,
       theme:     'strongs',
       trigger:   'click',
+      touch:     ['hold', 400],  // long-press on mobile opens the popup
       interactive: true,
       placement:   'top',
       maxWidth:    380,

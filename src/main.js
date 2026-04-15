@@ -74,6 +74,7 @@ async function bootstrap() {
   initSidebar();
   initCommandPalette();
   initPanels();
+  initMobileTopBar();
 
   // 5. Init Bible reading pane + Stage 2 + Stage 4 components
   initReadingPane();
@@ -226,6 +227,30 @@ function renderShell() {
   if (!app) return;
 
   app.innerHTML = `
+    <!-- Mobile top bar (hidden on desktop via CSS) -->
+    <div class="mobile-topbar" id="mobile-topbar">
+      <button class="mobile-topbar__hamburger" id="mobile-hamburger" aria-label="Open menu">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+      <div class="mobile-topbar__logo" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 48 48" fill="none">
+          <rect x="4" y="8" width="18" height="32" rx="2" fill="var(--color-accent-gold)" opacity="0.9"/>
+          <rect x="26" y="8" width="18" height="32" rx="2" fill="var(--color-accent-gold)" opacity="0.5"/>
+          <line x1="22" y1="8" x2="22" y2="40" stroke="var(--color-surface-base)" stroke-width="2"/>
+        </svg>
+        <span class="mobile-topbar__title">Berean</span>
+      </div>
+      <div class="mobile-topbar__pane-switcher">
+        <button class="mobile-topbar__pane-btn mobile-topbar__pane-btn--active" data-pane="bible">Bible</button>
+        <button class="mobile-topbar__pane-btn" data-pane="study">Study</button>
+      </div>
+    </div>
+
+    <!-- Sidebar backdrop (mobile drawer) -->
+    <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
     <nav class="sidebar" id="sidebar" aria-label="Main navigation"></nav>
 
     <main class="main-content" id="main-content">
@@ -441,9 +466,18 @@ function wireShortcuts() {
   Mousetrap.bind('ctrl+i',         () => document.dispatchEvent(new CustomEvent('berean:toggle-interlinear')));
   Mousetrap.bind('ctrl+p',         () => document.getElementById('toggle-parallel')?.click());
   Mousetrap.bind('ctrl+shift+m',   () => toggleTheme());
-  Mousetrap.bind('f',              () => { toggleFocusMode(); });
-  Mousetrap.bind('m',              () => { toggleMemoMode(); });
-  Mousetrap.bind('?',              () => { openShortcutsModal(); });
+  // Single-key shortcuts — guard against firing while typing in inputs / contentEditable
+  const _notTyping = () => {
+    const el = document.activeElement;
+    if (!el) return true;
+    const tag = el.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return false;
+    if (el.isContentEditable) return false;
+    return true;
+  };
+  Mousetrap.bind('f',              () => { if (_notTyping()) toggleFocusMode(); });
+  Mousetrap.bind('m',              () => { if (_notTyping()) toggleMemoMode(); });
+  Mousetrap.bind('?',              () => { if (_notTyping()) openShortcutsModal(); });
 
   // Button click wiring (buttons are added by reading-pane.js after it renders)
   document.addEventListener('click', e => {
@@ -534,6 +568,59 @@ function openShortcutsModal() {
   modal.querySelector('.sc-close').addEventListener('click', () => modal.close());
   modal.addEventListener('click', e => { if (e.target === modal) modal.close(); });
   modal.addEventListener('close', () => modal.remove());
+}
+
+// ── Mobile Top Bar ─────────────────────────────────────────
+function initMobileTopBar() {
+  const hamburger = document.getElementById('mobile-hamburger');
+  const backdrop  = document.getElementById('sidebar-backdrop');
+
+  hamburger?.addEventListener('click', () => bus.emit(EVENTS.SIDEBAR_TOGGLE));
+
+  backdrop?.addEventListener('click', () => {
+    document.getElementById('sidebar')?.classList.remove('sidebar--drawer-open');
+    backdrop.classList.remove('sidebar-backdrop--visible');
+  });
+
+  // Pane switcher — toggles bible pane vs study panel on mobile
+  const switcher  = document.querySelector('.mobile-topbar__pane-switcher');
+  const biblePane = document.getElementById('bible-pane');
+  const rightPanel = document.getElementById('right-panel');
+
+  switcher?.addEventListener('click', e => {
+    const btn = e.target.closest('.mobile-topbar__pane-btn');
+    if (!btn) return;
+    const pane = btn.dataset.pane;
+    switcher.querySelectorAll('.mobile-topbar__pane-btn').forEach(b =>
+      b.classList.toggle('mobile-topbar__pane-btn--active', b.dataset.pane === pane));
+    if (pane === 'bible') {
+      biblePane?.classList.remove('mobile-pane--hidden');
+      rightPanel?.classList.add('mobile-pane--hidden');
+    } else {
+      biblePane?.classList.add('mobile-pane--hidden');
+      rightPanel?.classList.remove('mobile-pane--hidden');
+    }
+  });
+
+  // When a study tab is activated via event (e.g. verse tap → commentary), auto-switch to study pane
+  bus.on(EVENTS.WORD_SELECTED, () => _switchMobilePaneTo('study'));
+}
+
+function _switchMobilePaneTo(pane) {
+  if (!window.matchMedia('(max-width: 768px)').matches) return;
+  const switcher   = document.querySelector('.mobile-topbar__pane-switcher');
+  const biblePane  = document.getElementById('bible-pane');
+  const rightPanel = document.getElementById('right-panel');
+  if (!switcher) return;
+  switcher.querySelectorAll('.mobile-topbar__pane-btn').forEach(b =>
+    b.classList.toggle('mobile-topbar__pane-btn--active', b.dataset.pane === pane));
+  if (pane === 'bible') {
+    biblePane?.classList.remove('mobile-pane--hidden');
+    rightPanel?.classList.add('mobile-pane--hidden');
+  } else {
+    biblePane?.classList.add('mobile-pane--hidden');
+    rightPanel?.classList.remove('mobile-pane--hidden');
+  }
 }
 
 // ── Component CSS ──────────────────────────────────────────
@@ -1169,6 +1256,188 @@ function injectComponentCSS() {
     .settings-comm__upload-schema code { font-family:var(--font-mono); font-size:.68rem; }
     .settings-about { margin:0; font-size:.8125rem; color:var(--color-ink-secondary); }
     .settings-about--muted { color:var(--color-ink-muted); }
+
+    /* ═══════════════════════════════════════════════════════════
+       MOBILE — all rules below only activate on ≤ 768 px.
+       Desktop layout is unchanged above this point.
+       ═══════════════════════════════════════════════════════════ */
+
+    /* ── Mobile top bar (hidden on desktop) ── */
+    .mobile-topbar { display:none; }
+
+    @media (max-width: 768px) {
+      /* Top bar */
+      .mobile-topbar {
+        display:flex; align-items:center; gap:.75rem;
+        position:fixed; top:0; left:0; right:0; z-index:200;
+        height:3rem;
+        padding:0 .75rem;
+        padding-top:env(safe-area-inset-top);
+        background:var(--color-surface-elevated);
+        border-bottom:1px solid var(--color-border-subtle);
+        flex-shrink:0;
+      }
+      .mobile-topbar__hamburger {
+        width:2.75rem; height:2.75rem; min-width:2.75rem;
+        display:flex; align-items:center; justify-content:center;
+        background:none; border:none; color:var(--color-ink-secondary);
+        border-radius:var(--radius-ui); cursor:pointer;
+      }
+      .mobile-topbar__logo { display:flex; align-items:center; gap:.5rem; flex:1; }
+      .mobile-topbar__title {
+        font-family:var(--font-scripture); font-size:1.125rem; font-weight:600;
+        color:var(--color-ink-primary);
+      }
+      .mobile-topbar__pane-switcher {
+        display:flex; gap:.25rem;
+        background:var(--color-surface-raised);
+        border-radius:.5rem; padding:.2rem;
+      }
+      .mobile-topbar__pane-btn {
+        padding:.3rem .75rem; border:none; border-radius:.375rem;
+        font-family:var(--font-ui); font-size:.8125rem; font-weight:500;
+        color:var(--color-ink-muted); background:none; cursor:pointer;
+        transition:background 100ms, color 100ms;
+        min-height:2rem;
+      }
+      .mobile-topbar__pane-btn--active {
+        background:var(--color-surface-elevated);
+        color:var(--color-accent-gold);
+        box-shadow:0 1px 3px rgba(0,0,0,.25);
+      }
+
+      /* Sidebar backdrop */
+      .sidebar-backdrop {
+        display:none; position:fixed; inset:0; z-index:299;
+        background:rgba(0,0,0,.55);
+      }
+      .sidebar-backdrop--visible { display:block; }
+
+      /* Sidebar becomes a drawer on mobile */
+      #app { flex-direction:column; }
+      .sidebar {
+        position:fixed; top:0; left:0; bottom:0; z-index:300;
+        width:260px; min-width:260px;
+        transform:translateX(-100%);
+        transition:transform 220ms var(--ease-berean);
+        padding-top:calc(.75rem + env(safe-area-inset-top));
+        padding-bottom:env(safe-area-inset-bottom);
+        align-items:flex-start;
+      }
+      .sidebar--drawer-open { transform:translateX(0); }
+      /* On mobile show labels beside icons */
+      .sidebar__nav { padding:0 .5rem; gap:.125rem; }
+      .sidebar__item {
+        aspect-ratio:unset; flex-direction:row; justify-content:flex-start;
+        width:100%; padding:.75rem .875rem; gap:.875rem;
+        min-height:3rem;
+      }
+      .sidebar__item-icon { flex-shrink:0; display:flex; align-items:center; }
+      .sidebar__item-label { font-family:var(--font-ui); font-size:.9375rem; }
+      .sidebar__bottom { padding:.5rem .5rem; }
+
+      /* Main content fills below top bar */
+      .main-content {
+        flex-direction:column;
+        margin-top:3rem; /* top bar height */
+        height:calc(100dvh - 3rem);
+        overflow:hidden;
+      }
+      /* Mobile pane visibility */
+      .main-content--mobile #bible-pane,
+      .main-content--mobile #right-panel {
+        flex:1; width:100%; min-width:0;
+        /* both visible by default — CSS handles show/hide */
+      }
+      /* Hide a pane when the switcher hides it */
+      .mobile-pane--hidden { display:none !important; }
+
+      /* Right panel fills full width on mobile */
+      .main-content--mobile #right-panel {
+        display:flex; flex-direction:column; overflow:hidden;
+      }
+
+      /* No gutter on mobile */
+      .gutter { display:none !important; }
+
+      /* Tab bar — scrollable horizontal strip instead of 2-row grid */
+      .rp-tabs {
+        display:flex !important;
+        overflow-x:auto;
+        scroll-snap-type:x mandatory;
+        -webkit-overflow-scrolling:touch;
+        border-bottom:1px solid var(--color-border-subtle);
+        flex-shrink:0;
+        scrollbar-width:none;
+      }
+      .rp-tabs::-webkit-scrollbar { display:none; }
+      .rp-tab {
+        flex:0 0 auto;
+        scroll-snap-align:start;
+        min-width:5rem;
+        padding:.5rem .625rem;
+        font-size:.6875rem;
+        border-bottom:2px solid transparent;
+        border-top:none !important; /* remove desktop 2nd-row border */
+        min-height:2.75rem;
+      }
+
+      /* Tap targets — sidebar already set to 3rem above */
+      .reading-pane__nav-btn { width:2.75rem; height:2.75rem; }
+      .reading-pane__action-btn { width:2.75rem; height:2.75rem; }
+      .verse-number { min-width:2rem; padding:.5rem .25rem 0 0; }
+      .selection-bar__btn { padding:.5rem .75rem; min-height:2.75rem; }
+
+      /* Reading pane — tighter horizontal padding on small screens */
+      .reading-pane__chapter { padding:1rem 1rem 5rem; }
+      .reading-pane__header { padding:.5rem .75rem; }
+
+      /* Safe-area padding for fixed/sticky elements at bottom */
+      .toast-container {
+        bottom:calc(1.5rem + env(safe-area-inset-bottom));
+        right:calc(1rem + env(safe-area-inset-right));
+      }
+      .selection-bar {
+        bottom:calc(.5rem + env(safe-area-inset-bottom));
+      }
+
+      /* Command palette — full width on small screens */
+      .command-palette {
+        width:calc(100vw - 1.5rem) !important;
+        max-width:none !important;
+        margin:env(safe-area-inset-top) auto 0;
+        border-radius:.75rem;
+      }
+
+      /* Settings modal — full screen on mobile */
+      .settings-modal {
+        width:100vw !important; max-width:100vw !important;
+        height:100dvh !important; max-height:100dvh !important;
+        margin:0 !important; border-radius:0 !important;
+        padding-top:env(safe-area-inset-top);
+        padding-bottom:env(safe-area-inset-bottom);
+      }
+
+      /* Focus mode still works — hide sidebar (it's already off-screen) */
+      .focus-mode .mobile-topbar { display:none; }
+      .focus-mode .main-content { margin-top:0; height:100dvh; }
+
+      /* Sermon view fills below top bar */
+      .sermon-view { margin-top:0; }
+
+      /* TipTap toolbar — single scrollable row on mobile (no wrap) */
+      .se-toolbar {
+        flex-wrap:nowrap !important;
+        overflow-x:auto;
+        scroll-snap-type:x proximity;
+        -webkit-overflow-scrolling:touch;
+        scrollbar-width:none;
+        padding:.375rem .5rem;
+      }
+      .se-toolbar::-webkit-scrollbar { display:none; }
+      .se-toolbar button { min-height:2.75rem; padding:.4rem .625rem; }
+      .se-toolbar__sep { flex-shrink:0; }
+    }
   `;
   document.head.appendChild(style);
 

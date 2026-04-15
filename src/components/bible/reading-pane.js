@@ -140,6 +140,9 @@ export function initReadingPane() {
   // Wire buttons
   document.getElementById('prev-chapter').addEventListener('click', () => goChapter(-1));
   document.getElementById('next-chapter').addEventListener('click', () => goChapter(1));
+
+  // ── Swipe gesture: left/right on reading scroll to navigate chapters ──
+  _wireSwipeNavigation();
   document.getElementById('book-select').addEventListener('click', toggleBookPicker);
   document.getElementById('chapter-select').addEventListener('click', toggleChapterPicker);
   document.getElementById('toggle-interlinear').addEventListener('click', () => {
@@ -656,4 +659,42 @@ function updateHistoryButtons() {
   const forward = document.getElementById('nav-forward');
   if (back)    back.disabled    = (_historyDepth === 0);
   if (forward) forward.disabled = (_forwardDepth === 0);
+}
+
+// ── Mobile touch gestures ───────────────────────────────────────────────────
+
+/**
+ * Swipe left → next chapter, swipe right → previous chapter.
+ * Only fires when horizontal movement clearly exceeds vertical (no conflict
+ * with normal vertical scrolling).
+ */
+function _wireSwipeNavigation() {
+  const scrollEl = document.getElementById('reading-scroll');
+  if (!scrollEl) return;
+
+  let _touchStartX = 0;
+  let _touchStartY = 0;
+
+  scrollEl.addEventListener('touchstart', e => {
+    _touchStartX = e.changedTouches[0].clientX;
+    _touchStartY = e.changedTouches[0].clientY;
+  }, { passive: true });
+
+  scrollEl.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - _touchStartX;
+    const dy = e.changedTouches[0].clientY - _touchStartY;
+    const absDx = Math.abs(dx);
+    const absDy = Math.abs(dy);
+
+    // Require a clear horizontal intent (> 60 px, 2× horizontal vs vertical)
+    if (absDx < 60 || absDx < absDy * 2) return;
+
+    if (dx < 0) {
+      // Swipe left → next chapter
+      document.getElementById('next-chapter')?.click();
+    } else {
+      // Swipe right → previous chapter
+      document.getElementById('prev-chapter')?.click();
+    }
+  }, { passive: true });
 }
