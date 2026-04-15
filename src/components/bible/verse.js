@@ -69,36 +69,27 @@ export function wireVerseEvents(container) {
 
 // ── Verse click / selection logic ────────────────────────────
 
-const _isMobile = () => window.matchMedia('(max-width: 768px)').matches;
-
 function _handleVerseClick(anchor, osisId) {
   const [book, chStr, vStr] = (osisId || '').split('.');
   const verse   = parseInt(vStr, 10) || 1;
   const chapter = parseInt(chStr, 10) || 1;
 
-  // Tapping an already-selected verse always deselects (clear the whole selection)
+  // Clicking an already-selected verse deselects (clear)
   if (_selectedOsisIds.includes(osisId) && _selectedOsisIds.length === 1) {
     clearVerseSelection();
     return;
   }
 
   if (_selectedOsisIds.length === 0) {
-    // Start a new selection
+    // First verse — select it and show the action bar immediately
     _selectedOsisIds = [osisId];
     _anchorOsis      = osisId;
     bus.emit(EVENTS.VERSE_SELECT, { osisId, book, chapter, verse });
     _updateSelectionVisuals();
-
-    if (_isMobile()) {
-      // Mobile: show action bar immediately, no dropdown menu
-      _showSelectionBar(book, chapter);
-    } else {
-      // Desktop: show dropdown for single verse; bar appears when range is extended
-      showVerseMenu(anchor, osisId);
-    }
+    _showSelectionBar(book, chapter);
 
   } else {
-    // Extend range from anchor to this verse (same chapter only)
+    // Second+ click — extend range from anchor to this verse (same chapter only)
     const [anchorBook, anchorChStr, anchorVStr] = (_anchorOsis || '').split('.');
     const anchorV  = parseInt(anchorVStr, 10) || 1;
     const clickedV = verse;
@@ -110,11 +101,7 @@ function _handleVerseClick(anchor, osisId) {
       _hideSelectionBar();
       bus.emit(EVENTS.VERSE_SELECT, { osisId, book, chapter, verse });
       _updateSelectionVisuals();
-      if (_isMobile()) {
-        _showSelectionBar(book, chapter);
-      } else {
-        showVerseMenu(anchor, osisId);
-      }
+      _showSelectionBar(book, chapter);
       return;
     }
 
