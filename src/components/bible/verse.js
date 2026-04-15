@@ -45,37 +45,57 @@ export function wireVerseEvents(container) {
   if (!container) return;
 
   container.addEventListener('click', async e => {
+    // Ignore clicks inside an open menu or the selection bar itself
+    if (e.target.closest('.verse-menu') || e.target.closest('.selection-bar')) return;
+
+    // Verse number button — always the primary trigger
     const btn = e.target.closest('[data-action="verse-menu"]');
     if (btn) {
       _handleVerseClick(btn, btn.dataset.osis);
       return;
     }
-    // Click inside chapter but not on a verse number — close dropdown only,
-    // keep the selection highlight so the user can extend the range
-    if (!e.target.closest('.selection-bar')) {
-      removeMenu();
+
+    // Verse text or anywhere else inside a verse container — also triggers selection
+    const container = e.target.closest('.verse-container[data-osis]');
+    if (container) {
+      _handleVerseClick(container, container.dataset.osis);
+      return;
     }
+
+    // Click in chapter whitespace — close dropdown, keep selection
+    removeMenu();
   });
 }
 
 // ── Verse click / selection logic ────────────────────────────
 
-function _handleVerseClick(btn, osisId) {
+const _isMobile = () => window.matchMedia('(max-width: 768px)').matches;
+
+function _handleVerseClick(anchor, osisId) {
   const [book, chStr, vStr] = (osisId || '').split('.');
   const verse   = parseInt(vStr, 10) || 1;
   const chapter = parseInt(chStr, 10) || 1;
 
+  // Tapping an already-selected verse always deselects (clear the whole selection)
+  if (_selectedOsisIds.includes(osisId) && _selectedOsisIds.length === 1) {
+    clearVerseSelection();
+    return;
+  }
+
   if (_selectedOsisIds.length === 0) {
-    // Start a new selection — highlight verse, show dropdown, no action bar yet
+    // Start a new selection
     _selectedOsisIds = [osisId];
     _anchorOsis      = osisId;
     bus.emit(EVENTS.VERSE_SELECT, { osisId, book, chapter, verse });
     _updateSelectionVisuals();
-    showVerseMenu(btn, osisId);
 
-  } else if (_selectedOsisIds.length === 1 && _selectedOsisIds[0] === osisId) {
-    // Same verse clicked again — deselect
-    clearVerseSelection();
+    if (_isMobile()) {
+      // Mobile: show action bar immediately, no dropdown menu
+      _showSelectionBar(book, chapter);
+    } else {
+      // Desktop: show dropdown for single verse; bar appears when range is extended
+      showVerseMenu(anchor, osisId);
+    }
 
   } else {
     // Extend range from anchor to this verse (same chapter only)
@@ -84,13 +104,17 @@ function _handleVerseClick(btn, osisId) {
     const clickedV = verse;
 
     if (anchorBook !== book || anchorChStr !== chStr) {
-      // Different chapter — start fresh, show dropdown for new selection
+      // Different chapter — start fresh
       _selectedOsisIds = [osisId];
       _anchorOsis      = osisId;
       _hideSelectionBar();
       bus.emit(EVENTS.VERSE_SELECT, { osisId, book, chapter, verse });
       _updateSelectionVisuals();
-      showVerseMenu(btn, osisId);
+      if (_isMobile()) {
+        _showSelectionBar(book, chapter);
+      } else {
+        showVerseMenu(anchor, osisId);
+      }
       return;
     }
 
@@ -110,7 +134,7 @@ function _handleVerseClick(btn, osisId) {
       verseEnd:   maxV,
     });
 
-    removeMenu(); // close dropdown when range is extended
+    removeMenu();
     _updateSelectionVisuals();
     _showSelectionBar(anchorBook, parseInt(anchorChStr, 10));
   }

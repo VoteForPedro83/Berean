@@ -1390,15 +1390,61 @@ function injectComponentCSS() {
 
       /* Reading pane — tighter horizontal padding on small screens */
       .reading-pane__chapter { padding:1rem 1rem 5rem; }
-      .reading-pane__header { padding:.5rem .75rem; }
+
+      /* Reading pane header — two rows on mobile so all buttons stay accessible */
+      .reading-pane__header {
+        padding:.375rem .5rem;
+        flex-wrap:wrap;
+        gap:.25rem;
+      }
+      .reading-pane__nav { flex:1; min-width:0; }
+      .reading-pane__actions {
+        width:100%;
+        overflow-x:auto;
+        scrollbar-width:none;
+        padding-bottom:.125rem;
+        justify-content:flex-start;
+        gap:.125rem;
+      }
+      .reading-pane__actions::-webkit-scrollbar { display:none; }
+      /* Make all action buttons the same comfortable size in the second row */
+      .reading-pane__actions .reading-pane__action-btn,
+      .reading-pane__actions .reading-pane__nav-btn,
+      .reading-pane__actions .reading-pane__translation-tag {
+        flex-shrink:0;
+      }
+
+      /* Verse text — disable browser text selection so taps feel like taps */
+      .verse-text { user-select:none; -webkit-user-select:none; }
+      /* Verse container tappable area */
+      .verse-container { cursor:pointer; }
 
       /* Safe-area padding for fixed/sticky elements at bottom */
       .toast-container {
         bottom:calc(1.5rem + env(safe-area-inset-bottom));
         right:calc(1rem + env(safe-area-inset-right));
       }
+
+      /* Selection bar — stack vertically on narrow screens, always on screen */
       .selection-bar {
-        bottom:calc(.5rem + env(safe-area-inset-bottom));
+        position:sticky;
+        top:.5rem;
+        width:calc(100% - 1rem);
+        max-width:none;
+        border-radius:.75rem;
+        flex-direction:column;
+        align-items:flex-start;
+        gap:.5rem;
+        padding:.625rem .875rem;
+        margin:.5rem .5rem 0;
+      }
+      .selection-bar__actions {
+        flex-wrap:wrap;
+        gap:.375rem;
+      }
+      .selection-bar__btn {
+        padding:.4rem .75rem;
+        font-size:.8125rem;
       }
 
       /* Command palette — full width on small screens */
