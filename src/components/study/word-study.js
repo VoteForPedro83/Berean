@@ -197,6 +197,9 @@ function closeWordStudy() {
         Toggle interlinear (Ctrl+I) then click any Greek or Hebrew word to open its full study here.
       </p>
     </div>`;
+
+  // On mobile, return to the Bible/interlinear pane
+  document.dispatchEvent(new CustomEvent('berean:word-study-closed'));
 }
 
 // ── Concordance ───────────────────────────────────────────────────────────────

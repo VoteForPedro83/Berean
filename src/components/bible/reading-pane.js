@@ -443,7 +443,7 @@ function buildVerseListHtml(verses, targetVerse) {
         osisId:   osis,
         verse:    v.verse,
         text:     v.text,
-        isTarget: v.verse === targetVerse,
+        isTarget: targetVerse > 1 && v.verse === targetVerse,
       }));
     }
   }

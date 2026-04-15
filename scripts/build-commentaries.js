@@ -72,8 +72,19 @@ const SEQ_TO_OSIS = [
   '1PE','2PE','1JN','2JN','3JN','JUD','REV',
 ];
 
-function bookNumberToOsis(n) {
-  // Try multiples-of-10 first, then sequential
+/**
+ * Convert a source book number to an OSIS book ID.
+ * @param {number} n          - Book number from source file
+ * @param {boolean} sequential - true = e-Sword sequential 1-66;
+ *                               false = MyBible multiples-of-10 (default: auto-detect)
+ */
+function bookNumberToOsis(n, sequential = false) {
+  if (sequential) {
+    // e-Sword .cmti files use strictly sequential 1-66 — do NOT try the
+    // multiples-of-10 table first, or books like PHP (50) get mapped to DEU.
+    return (n >= 1 && n <= 66) ? (SEQ_TO_OSIS[n] || null) : null;
+  }
+  // MyBible / other formats: multiples-of-10 take priority, fall back to sequential
   if (MYBIBLE_TO_OSIS_10[n]) return MYBIBLE_TO_OSIS_10[n];
   if (n >= 1 && n <= 66)     return SEQ_TO_OSIS[n] || null;
   return null;
@@ -236,13 +247,15 @@ function loadMyBibleFile(db, filePath) {
   const tables = src.prepare(`SELECT name FROM sqlite_master WHERE type='table'`).all().map(t => t.name);
 
   let rows = null;
+  let isSequential = false; // e-Sword sequential 1-66 vs MyBible multiples-of-10
 
   if (tables.includes('VerseCommentary')) {
     // ── e-Sword iOS .cmti format ──────────────────────────────
     // Tables: Details, BookCommentary, ChapterCommentary, VerseCommentary
     // VerseCommentary(Book INT, ChapterBegin INT, VerseBegin INT,
     //                 ChapterEnd INT, VerseEnd INT, Comments TEXT)
-    // Book = sequential 1-66
+    // Book = sequential 1-66 (IMPORTANT: never use ×10 mapping for these files)
+    isSequential = true;
     rows = src.prepare(
       `SELECT Book AS book_number,
               ChapterBegin AS chapter_number_from, VerseBegin AS verse_number_from,
@@ -266,6 +279,14 @@ function loadMyBibleFile(db, filePath) {
 
   } else if (tables.includes('commentary')) {
     // ── Try multiple commentary table schemas ──────────────────
+    // Auto-detect sequential vs multiples-of-10: if max book_number ≤ 66 it must
+    // be sequential (MyBible ×10 numbers go up to 660 for Revelation).
+    try {
+      const maxRow = src.prepare(`SELECT MAX(book_number) AS m FROM commentary`).get()
+               || src.prepare(`SELECT MAX(book) AS m FROM commentary`).get();
+      if (maxRow?.m != null && maxRow.m <= 66) isSequential = true;
+    } catch { /* column may not exist — leave isSequential = false */ }
+
     const commentaryTries = [
       // MyBible .commentaries.SQLite3
       `SELECT book_number AS book_number, chapter_number_from, verse_number_from,
@@ -302,8 +323,7 @@ function loadMyBibleFile(db, filePath) {
   let count = 0;
   const run = db.transaction(() => {
     for (const r of rows) {
-      // SEQ_TO_OSIS handles both sequential 1-66 AND multiples-of-10
-      const bookOsis = bookNumberToOsis(r.book_number);
+      const bookOsis = bookNumberToOsis(r.book_number, isSequential);
       if (!bookOsis) continue;
       const vs  = r.verse_number_from ?? 1;
       const ve  = r.verse_number_to   ?? vs;

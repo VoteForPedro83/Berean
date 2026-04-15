@@ -146,6 +146,7 @@ function _renderMarkers() {
     marker.bindPopup(`
       <div class="map-popup">
         <strong class="map-popup__name">${_esc(place.name)}</strong>
+        ${place.ref ? `<span class="map-popup__scripture-ref">${_esc(place.ref)}</span>` : ''}
         <p class="map-popup__desc">${_esc(place.desc)}</p>
         ${refsHtml}
       </div>`, { maxWidth: 260 });

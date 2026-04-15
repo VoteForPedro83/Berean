@@ -604,6 +604,9 @@ function initMobileTopBar() {
 
   // When a study tab is activated via event (e.g. verse tap → commentary), auto-switch to study pane
   bus.on(EVENTS.WORD_SELECTED, () => _switchMobilePaneTo('study'));
+
+  // When word study is closed, return to the Bible pane on mobile
+  document.addEventListener('berean:word-study-closed', () => _switchMobilePaneTo('bible'));
 }
 
 function _switchMobilePaneTo(pane) {
@@ -637,6 +640,7 @@ function injectComponentCSS() {
       width:var(--sidebar-width,3.5rem); min-width:var(--sidebar-width,3.5rem);
       background:var(--color-surface-elevated); border-right:1px solid var(--color-border-subtle);
       display:flex; flex-direction:column; align-items:center; padding:.75rem 0; z-index:100;
+      overflow:visible;
       transition:width 200ms var(--ease-berean);
     }
     .sidebar--collapsed { width:0; min-width:0; overflow:hidden; }
@@ -646,13 +650,24 @@ function injectComponentCSS() {
     .sidebar__item {
       width:100%; aspect-ratio:1; display:flex; align-items:center; justify-content:center;
       background:none; border:none; border-radius:var(--radius-ui,.375rem);
-      color:var(--color-ink-muted); cursor:pointer;
+      color:var(--color-ink-muted); cursor:pointer; position:relative; overflow:visible;
       transition:background-color 100ms var(--ease-berean), color 100ms var(--ease-berean);
     }
     .sidebar__item:hover { background:var(--color-surface-raised); color:var(--color-ink-primary); }
     .sidebar__item--active { color:var(--color-accent-gold); background:color-mix(in srgb,var(--color-accent-gold) 10%,transparent); }
     .sidebar__item:focus-visible { outline:2px solid var(--color-accent-gold); outline-offset:2px; }
-    .sidebar__item-label { display:none; }
+    /* Label hidden by default — floats out as a tooltip on hover */
+    .sidebar__item-label {
+      display:none; position:absolute; left:calc(100% + .625rem); top:50%;
+      transform:translateY(-50%); white-space:nowrap;
+      background:var(--color-surface-overlay,#1a1a1a);
+      color:var(--color-ink-primary); font-family:var(--font-ui);
+      font-size:.8125rem; padding:.3rem .625rem;
+      border-radius:var(--radius-ui,.375rem);
+      box-shadow:0 2px 8px rgba(0,0,0,.4);
+      pointer-events:none; z-index:300;
+    }
+    .sidebar__item:hover .sidebar__item-label { display:block; }
 
     .main-content { flex:1; display:flex; overflow:hidden; }
     .reading-pane-container { flex:1; overflow:hidden; display:flex; flex-direction:column; }
@@ -780,7 +795,8 @@ function injectComponentCSS() {
     .map-filter-toggle { display:flex; align-items:center; gap:.25rem; font-size:.7rem; color:var(--color-ink-secondary); cursor:pointer; user-select:none; }
     .map-filter-toggle input { accent-color:var(--color-accent-gold); cursor:pointer; }
     .berean-map { flex:1; min-height:0; }
-    .map-popup__name { display:block; color:#1a1a1a; font-weight:600; margin-bottom:.25rem; }
+    .map-popup__name { display:block; color:#1a1a1a; font-weight:600; margin-bottom:.125rem; }
+    .map-popup__scripture-ref { display:block; font-size:.7rem; font-family:var(--font-mono,'Fira Code',monospace); color:#8C1127; margin-bottom:.375rem; letter-spacing:.01em; }
     .map-popup__desc { margin:0 0 .5rem; font-size:.8125rem; color:#444; line-height:1.4; }
     .map-popup__refs { border-top:1px solid #e0ddd6; padding-top:.5rem; display:flex; flex-direction:column; gap:.375rem; }
     .map-popup__ref { display:flex; gap:.4rem; align-items:baseline; font-size:.8rem; line-height:1.35; }
@@ -1326,15 +1342,23 @@ function injectComponentCSS() {
         align-items:flex-start;
       }
       .sidebar--drawer-open { transform:translateX(0); }
-      /* On mobile show labels beside icons */
+      /* Mobile drawer: icons only — labels are not needed since items are large enough */
       .sidebar__nav { padding:0 .5rem; gap:.125rem; }
       .sidebar__item {
         aspect-ratio:unset; flex-direction:row; justify-content:flex-start;
         width:100%; padding:.75rem .875rem; gap:.875rem;
-        min-height:3rem;
+        min-height:3rem; overflow:hidden;
       }
+      /* In the drawer, show labels inline (no absolute positioning) */
+      .sidebar__item-label {
+        display:block; position:static; transform:none;
+        background:none; box-shadow:none; padding:0;
+        font-size:.9375rem; color:inherit; pointer-events:none; z-index:auto;
+        white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+      }
+      /* Drawer labels never show as hover tooltip */
+      .sidebar__item:hover .sidebar__item-label { display:block; }
       .sidebar__item-icon { flex-shrink:0; display:flex; align-items:center; }
-      .sidebar__item-label { font-family:var(--font-ui); font-size:.9375rem; }
       .sidebar__bottom { padding:.5rem .5rem; }
 
       /* Main content fills below top bar */
@@ -3088,8 +3112,8 @@ function injectComponentCSS() {
     .ss-qr__copied { font-size: .75rem; color: var(--color-accent-sage); margin: .5rem 0 0; }
 
     /* ── Stage 6 Item 6: Timeline (vertical feed) ── */
-    .rp-pane--timeline { overflow: hidden; display: flex; flex-direction: column; padding: 0 !important; }
-    .tp { display: flex; flex-direction: column; height: 100%; overflow: hidden; font-family: var(--font-ui); }
+    .rp-pane--timeline { overflow: hidden; display: flex; flex-direction: column; padding: 0 !important; flex: 1; min-height: 0; }
+    .tp { display: flex; flex-direction: column; flex: 1; min-height: 0; overflow: hidden; font-family: var(--font-ui); }
 
     /* Header */
     .tp__header {
@@ -3224,8 +3248,8 @@ function injectComponentCSS() {
     .tp__empty-hint { font-size: .72rem; color: var(--color-ink-muted); font-style: italic; }
 
     /* ── Stage 6 Item 7: Entity Graph ── */
-    .rp-pane--graph { overflow: hidden; display: flex; flex-direction: column; padding: 0 !important; }
-    .eg { display: flex; flex-direction: column; height: 100%; }
+    .rp-pane--graph { overflow: hidden; display: flex; flex-direction: column; padding: 0 !important; flex: 1; min-height: 0; }
+    .eg { display: flex; flex-direction: column; flex: 1; min-height: 0; }
     .eg__header {
       padding: .5rem .75rem; background: var(--color-surface-elevated);
       border-bottom: 1px solid var(--color-border-subtle);
@@ -3248,6 +3272,41 @@ function injectComponentCSS() {
       transition: border-color 100ms, color 100ms;
     }
     .eg__clear:hover { border-color: var(--color-accent-burgundy); color: var(--color-accent-burgundy); }
+
+    /* NT-OT quotation list below the graph */
+    .eg__quotes {
+      border-top: 1px solid var(--color-border-subtle);
+      background: var(--color-surface-elevated);
+      max-height: 40%;
+      overflow-y: auto;
+      flex-shrink: 0;
+    }
+    .eg-quotes__header {
+      padding: .375rem .75rem;
+      font-size: .6875rem; font-weight: 600; text-transform: uppercase;
+      letter-spacing: .06em; color: var(--color-ink-muted);
+      font-family: var(--font-ui); position: sticky; top: 0;
+      background: var(--color-surface-elevated);
+      border-bottom: 1px solid var(--color-border-subtle);
+    }
+    .eg-quotes__list { padding: .25rem 0; }
+    .eg-quote {
+      display: flex; align-items: center; gap: .375rem;
+      padding: .25rem .75rem; flex-wrap: wrap;
+    }
+    .eg-quote__link {
+      background: none; border: none; cursor: pointer; padding: .125rem .375rem;
+      font-size: .75rem; font-family: var(--font-mono);
+      color: var(--color-accent-gold); border-radius: 3px;
+      transition: background 80ms;
+    }
+    .eg-quote__link:hover {
+      background: color-mix(in srgb, var(--color-accent-gold) 12%, transparent);
+    }
+    .eg-quote__rel {
+      font-size: .6875rem; color: var(--color-ink-muted);
+      font-family: var(--font-ui); font-style: italic;
+    }
   `;
   document.head.appendChild(ssStyle);
 

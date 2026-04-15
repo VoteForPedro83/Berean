@@ -21,7 +21,9 @@ import { getPeopleForChapter,
          getPlacesForChapter,
          getPeopleCoOccurrences,
          getPersonPlaceLinks }        from '../../db/narrative.js';
+import { getNtOtQuotesForChapter }    from '../../db/crossrefs.js';
 import { BOOK_MAP }                   from '../../data/books.js';
+import { navigateTo }                 from '../../router.js';
 
 let _container = null;
 let _cy        = null;
@@ -57,6 +59,7 @@ function _renderShell() {
         </div>
       </div>
       <div class="eg__canvas" id="eg-canvas"></div>
+      <div class="eg__quotes" id="eg-quotes" hidden></div>
     </div>`;
 }
 
@@ -73,11 +76,12 @@ async function _loadForPassage(book, chapter) {
   _setStatus(`Loading ${bookName} ${chapter}…`);
 
   try {
-    const [people, places, personEdges, placeEdges] = await Promise.all([
+    const [people, places, personEdges, placeEdges, quotes] = await Promise.all([
       getPeopleForChapter(book, chapter),
       getPlacesForChapter(book, chapter),
       getPeopleCoOccurrences(book, chapter),
       getPersonPlaceLinks(book, chapter),
+      getNtOtQuotesForChapter(book, chapter).catch(() => []),
     ]);
 
     const title = document.getElementById('eg-title');
@@ -86,18 +90,69 @@ async function _loadForPassage(book, chapter) {
     if (!people.length && !places.length) {
       _setStatus('No narrative data for this chapter');
       if (_cy) _cy.elements().remove();
-      _loading = false;
-      return;
+    } else {
+      _setStatus('');
+      _renderGraph(people, places, personEdges, placeEdges);
     }
 
-    _setStatus('');
-    _renderGraph(people, places, personEdges, placeEdges);
+    _renderQuotes(quotes, bookName, chapter);
   } catch (err) {
     console.error('[entity-graph]', err);
     _setStatus('Failed to load graph data');
   } finally {
     _loading = false;
   }
+}
+
+// ── Quotation list ────────────────────────────────────────
+
+function _osisLabel(osis) {
+  const [book, ch, v] = (osis || '').split('.');
+  const name = BOOK_MAP.get(book)?.name ?? book;
+  return v ? `${name} ${ch}:${v}` : `${name} ${ch}`;
+}
+
+function _renderQuotes(quotes, bookName, chapter) {
+  const el = document.getElementById('eg-quotes');
+  if (!el) return;
+
+  if (!quotes || !quotes.length) {
+    el.hidden = true;
+    return;
+  }
+
+  const relLabel = { quotation: 'quotes', allusion: 'alludes to', echo: 'echoes' };
+
+  const rows = quotes.map(q => {
+    const ntLabel = _osisLabel(q.nt_osis);
+    const otLabel = _osisLabel(q.ot_osis);
+    const rel     = relLabel[q.relationship] || q.relationship || 'references';
+    return `
+      <div class="eg-quote">
+        <button class="eg-quote__link" data-osis="${q.nt_osis}" title="Go to ${ntLabel}">
+          ${ntLabel}
+        </button>
+        <span class="eg-quote__rel">${rel}</span>
+        <button class="eg-quote__link" data-osis="${q.ot_osis}" title="Go to ${otLabel}">
+          ${otLabel}
+        </button>
+      </div>`;
+  }).join('');
+
+  el.hidden = false;
+  el.innerHTML = `
+    <div class="eg-quotes__header">
+      Scripture links — ${bookName} ${chapter}
+    </div>
+    <div class="eg-quotes__list">${rows}</div>`;
+
+  // Wire click → navigate
+  el.querySelectorAll('.eg-quote__link').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const [book, ch, v] = btn.dataset.osis.split('.');
+      navigateTo({ book, chapter: parseInt(ch, 10), verse: v ? parseInt(v, 10) : 1 });
+    });
+  });
 }
 
 // ── Graph rendering ───────────────────────────────────────

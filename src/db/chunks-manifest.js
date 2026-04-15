@@ -3,10 +3,10 @@
 export const DB_CHUNKS = {
   "commentaries": {
     "serverMode": "chunked",
-    "urlPrefix": "/db/chunks/commentaries/b6432a28e3e2/",
+    "urlPrefix": "/db/chunks/commentaries/2970af3adbb1/",
     "serverChunkSize": 25165824,
     "requestChunkSize": 4096,
-    "databaseLengthBytes": 313946112,
+    "databaseLengthBytes": 313933824,
     "suffixLength": 3
   },
   "cross_refs": {
