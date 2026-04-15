@@ -252,6 +252,21 @@ function wireStrongsPopups() {
 
   const stacks = _chapterEl.querySelectorAll('.word-stack[data-strongs]');
 
+  // Shared touch-movement guard for the whole chapter — prevents slow-scroll
+  // from triggering word selection or popups on mobile.
+  let _touchMoved = false, _touchX = 0, _touchY = 0;
+  _chapterEl.addEventListener('touchstart', e => {
+    _touchX = e.touches[0].clientX;
+    _touchY = e.touches[0].clientY;
+    _touchMoved = false;
+  }, { passive: true });
+  _chapterEl.addEventListener('touchmove', e => {
+    if (Math.abs(e.touches[0].clientX - _touchX) > 8 ||
+        Math.abs(e.touches[0].clientY - _touchY) > 8) {
+      _touchMoved = true;
+    }
+  }, { passive: true });
+
   stacks.forEach(stack => {
     const strongsId = stack.dataset.strongs;
     if (!strongsId) return;
@@ -260,13 +275,16 @@ function wireStrongsPopups() {
       content:   '<div class="strongs-popup__loading">Loading…</div>',
       allowHTML: true,
       theme:     'strongs',
+      // Desktop: click opens popup. Mobile: long-press (hold) only — tap scrolls freely.
       trigger:   'click',
-      touch:     ['hold', 400],  // long-press on mobile opens the popup
+      touch:     ['hold', 400],
       interactive: true,
       placement:   'top',
       maxWidth:    380,
       appendTo:    document.body,
       onShow(inst) {
+        // If finger moved (scroll), block popup opening
+        if (_touchMoved) return false;
         // Hide any other open popup first
         if (_activePopup && _activePopup !== inst) _activePopup.hide();
         _activePopup = inst;
@@ -282,8 +300,9 @@ function wireStrongsPopups() {
       },
     });
 
-    // Also fire word-selected event for the right panel
+    // Also fire word-selected event for the right panel (desktop click only)
     stack.addEventListener('click', () => {
+      if (_touchMoved) return;
       bus.emit(EVENTS.WORD_SELECTED, {
         strongs:    strongsId,
         lemma:      stack.querySelector('.source-text')?.textContent,

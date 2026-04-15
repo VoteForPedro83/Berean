@@ -44,7 +44,27 @@ export function renderVerse({ osisId, verse, text, isTarget = false }) {
 export function wireVerseEvents(container) {
   if (!container) return;
 
+  // Track touch movement so slow scrolls don't trigger selection
+  let _touchMoved = false, _touchStartX = 0, _touchStartY = 0;
+  container.addEventListener('touchstart', e => {
+    _touchStartX = e.touches[0].clientX;
+    _touchStartY = e.touches[0].clientY;
+    _touchMoved  = false;
+  }, { passive: true });
+  container.addEventListener('touchmove', e => {
+    if (Math.abs(e.touches[0].clientX - _touchStartX) > 8 ||
+        Math.abs(e.touches[0].clientY - _touchStartY) > 8) {
+      _touchMoved = true;
+    }
+  }, { passive: true });
+
   container.addEventListener('click', async e => {
+    // If finger moved (scroll gesture), ignore this synthetic click
+    if (_touchMoved) { _touchMoved = false; return; }
+
+    // In interlinear mode verse selection is disabled — only word stacks respond
+    if (document.querySelector('#chapter-content .interlinear-row')) return;
+
     // Ignore clicks inside an open menu or the selection bar itself
     if (e.target.closest('.verse-menu') || e.target.closest('.selection-bar')) return;
 
@@ -56,9 +76,9 @@ export function wireVerseEvents(container) {
     }
 
     // Verse text or anywhere else inside a verse container — also triggers selection
-    const container = e.target.closest('.verse-container[data-osis]');
-    if (container) {
-      _handleVerseClick(container, container.dataset.osis);
+    const vc = e.target.closest('.verse-container[data-osis]');
+    if (vc) {
+      _handleVerseClick(vc, vc.dataset.osis);
       return;
     }
 
@@ -74,57 +94,26 @@ function _handleVerseClick(anchor, osisId) {
   const verse   = parseInt(vStr, 10) || 1;
   const chapter = parseInt(chStr, 10) || 1;
 
-  // Clicking an already-selected verse deselects (clear)
-  if (_selectedOsisIds.includes(osisId) && _selectedOsisIds.length === 1) {
-    clearVerseSelection();
+  if (_selectedOsisIds.includes(osisId)) {
+    // Already selected — toggle off
+    _selectedOsisIds = _selectedOsisIds.filter(id => id !== osisId);
+    _updateSelectionVisuals();
+    if (_selectedOsisIds.length === 0) {
+      _anchorOsis = null;
+      _hideSelectionBar();
+    } else {
+      const [b, c] = (_selectedOsisIds[0] || '').split('.');
+      _showSelectionBar(b, parseInt(c, 10));
+    }
     return;
   }
 
-  if (_selectedOsisIds.length === 0) {
-    // First verse — select it and show the action bar immediately
-    _selectedOsisIds = [osisId];
-    _anchorOsis      = osisId;
-    bus.emit(EVENTS.VERSE_SELECT, { osisId, book, chapter, verse });
-    _updateSelectionVisuals();
-    _showSelectionBar(book, chapter);
-
-  } else {
-    // Second+ click — extend range from anchor to this verse (same chapter only)
-    const [anchorBook, anchorChStr, anchorVStr] = (_anchorOsis || '').split('.');
-    const anchorV  = parseInt(anchorVStr, 10) || 1;
-    const clickedV = verse;
-
-    if (anchorBook !== book || anchorChStr !== chStr) {
-      // Different chapter — start fresh
-      _selectedOsisIds = [osisId];
-      _anchorOsis      = osisId;
-      _hideSelectionBar();
-      bus.emit(EVENTS.VERSE_SELECT, { osisId, book, chapter, verse });
-      _updateSelectionVisuals();
-      _showSelectionBar(book, chapter);
-      return;
-    }
-
-    const minV = Math.min(anchorV, clickedV);
-    const maxV = Math.max(anchorV, clickedV);
-
-    _selectedOsisIds = [];
-    for (let v = minV; v <= maxV; v++) {
-      _selectedOsisIds.push(`${anchorBook}.${anchorChStr}.${v}`);
-    }
-
-    bus.emit(EVENTS.VERSE_RANGE_SELECT, {
-      osisIds:    [..._selectedOsisIds],
-      book:       anchorBook,
-      chapter:    parseInt(anchorChStr, 10),
-      verseStart: minV,
-      verseEnd:   maxV,
-    });
-
-    removeMenu();
-    _updateSelectionVisuals();
-    _showSelectionBar(anchorBook, parseInt(anchorChStr, 10));
-  }
+  // Not yet selected — toggle on
+  _selectedOsisIds.push(osisId);
+  if (!_anchorOsis) _anchorOsis = osisId;
+  bus.emit(EVENTS.VERSE_SELECT, { osisId, book, chapter, verse });
+  _updateSelectionVisuals();
+  _showSelectionBar(book, chapter);
 }
 
 // ── Visual selection highlight ────────────────────────────────
@@ -147,13 +136,10 @@ function _showSelectionBar(book, chapter) {
   if (count === 0) return;
 
   const [, , vStart] = (_selectedOsisIds[0] || '').split('.');
-  const [, , vEnd]   = (_selectedOsisIds[count - 1] || '').split('.');
-  const rangeLabel   = count === 1
-    ? `Verse ${vStart}`
-    : `Verses ${vStart}–${vEnd}`;
+  const barLabel = count === 1 ? `Verse ${vStart}` : `${count} verses`;
 
   const innerHtml = `
-    <span class="selection-bar__label">${count === 1 ? '1 verse' : count + ' verses'} · ${_esc(rangeLabel)}</span>
+    <span class="selection-bar__label">${_esc(barLabel)}</span>
     <div class="selection-bar__actions">
       <button class="selection-bar__btn" data-sel-action="ask-ai"      title="Send to AI panel">Ask AI</button>
       <button class="selection-bar__btn" data-sel-action="copy"        title="Copy verse text">Copy</button>
